@@ -1,0 +1,4 @@
+import type { Metadata } from 'next';
+import { poojas } from './data';
+export const metadata: Metadata = { title: 'Poojas in Gokarna | Gokarna Purohita', description: 'Browse traditional Poojas and ritual services available in Gokarna.' };
+export default function PoojasPage() { return <main className="pooja-page"><header className="page-header"><a href="/">ॐ GOKARNA PUROHITHA</a><a href="/">← Back</a></header><section><p className="eyebrow">POOJA SERVICES IN GOKARNA</p><h1>Know more about Poojas</h1><p>Choose a Pooja to read its overview. Practical details and suitability are confirmed directly by the Purohita.</p><div className="pooja-list">{poojas.map(([slug,name,image]) => <a href={`/poojas/${slug}`} key={slug}><div style={{backgroundImage:`url("${image}")`}}/><h2>{name}</h2><span>Read more →</span></a>)}</div></section><div className="page-actions"><a href="tel:+919743029249">☎ Call Now</a><a href="https://wa.me/919743029249">WhatsApp</a></div></main>; }

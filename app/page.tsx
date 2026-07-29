@@ -1,97 +1,52 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import en from './locales/en.json';
-import kn from './locales/kn.json';
+import { type FormEvent, useState } from 'react';
 
-type Language = 'en' | 'kn';
-type Service = { id: string; name: string; kannada: string; imageLabel: string };
+type Language = 'kn' | 'en' | 'te';
+type Service = { id: string; kn: string; en: string; te: string; image: string };
 
-const services: Service[] = [
-  { id: 'rudrabhisheka', name: 'Rudrabhisheka', kannada: 'ರುದ್ರಾಭಿಷೇಕ', imageLabel: 'Rudrabhisheka ritual image' },
-  { id: 'maha-mrityunjaya-homa', name: 'Maha Mrityunjaya Homa', kannada: 'ಮಹಾ ಮೃತ್ಯುಂಜಯ ಹೋಮ', imageLabel: 'Homa ritual image' },
-  { id: 'ganapati-homa', name: 'Ganapati Homa', kannada: 'ಗಣಪತಿ ಹೋಮ', imageLabel: 'Ganapati Homa ritual image' },
-  { id: 'satyanarayana-pooja', name: 'Satyanarayana Pooja', kannada: 'ಸತ್ಯನಾರಾಯಣ ಪೂಜೆ', imageLabel: 'Pooja ritual image' },
-  { id: 'navagraha-shanti', name: 'Navagraha Shanti', kannada: 'ನವಗ್ರಹ ಶಾಂತಿ', imageLabel: 'Navagraha ritual image' },
-  { id: 'narayana-bali', name: 'Narayana Bali', kannada: 'ನಾರಾಯಣ ಬಲಿ', imageLabel: 'Traditional ritual image' },
-  { id: 'pitru-dosha-pooja', name: 'Pitru Dosha Pooja', kannada: 'ಪಿತೃ ದೋಷ ಪೂಜೆ', imageLabel: 'Traditional ritual image' },
-  { id: 'tripindi-shraddha', name: 'Tripindi Shraddha', kannada: 'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ', imageLabel: 'Shraddha ritual image' },
-  { id: 'ayushya-homa', name: 'Ayushya Homa', kannada: 'ಆಯುಷ್ಯ ಹೋಮ', imageLabel: 'Homa ritual image' },
-  { id: 'lakshmi-pooja', name: 'Lakshmi Pooja', kannada: 'ಲಕ್ಷ್ಮೀ ಪೂಜೆ', imageLabel: 'Lakshmi Pooja ritual image' },
-  { id: 'chandi-homa', name: 'Chandi Homa', kannada: 'ಚಂಡಿ ಹೋಮ', imageLabel: 'Chandi Homa ritual image' },
-  { id: 'griha-pravesha', name: 'Griha Pravesha', kannada: 'ಗೃಹ ಪ್ರವೇಶ', imageLabel: 'Griha Pravesha ritual image' },
-];
-
-const galleryLabels = ['Gokarna Mahabaleshwar Temple', 'Temple bells', 'Deepa / oil lamps', 'Kalasha', 'Pooja flowers', 'Homa ritual'];
-const galleryImages = [
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_2cemKVm-yT71nv_pVXy40Bs9er85vYLmB5qU96wQyg&s=10',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8UVVbTzIwXAs7GgboNUNvnbuFjc9knSCLnClscd9RAA&s=10',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcEW8xdsr4TbgDwMYpOOIBPglTIk4Iw--TgZZ5hkwyBLv4mFk5dMCDaKis&s=10',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9d4VCuHMzCqhAB6wxAInxRpyd3oAm0_6D39bMnVnalg&s=10',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbrzYKkq7FoCuG9b9_1cy8oBoOj5DDM3DqEBn3p84IEA&s=10',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRtuqjTM7sGFm_hgtRnXPVscFVAfhCZjdsTcrjcH-e8-l-IbSyGUieUpc&s=10'
-];
-const heroImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO120BD11barpa1GwZQb90ShadaN5Kgd0nc3gPlyvSyhEtBjwLNoU905w&s=10';
-const serviceImages = [
-  'https://t4.ftcdn.net/jpg/02/82/22/25/360_F_282222546_qiGzPx9W9BeuZiXJaDr7o3A3AdgisMnY.jpg', 'https://homas.org/wp-content/uploads/2025/02/Mrutyunjaya-homam.jpg', 'https://homas.org/wp-content/uploads/2022/02/Ganapathi-sudarshana-homa.jpg', 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_D4BC0VP1_202410271641330.webp', 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_pTtmxopr_202411152235270.jpg', 'https://dorituals.com/wp-content/uploads/2024/07/narayan-nagbali-trimbakeshwar.jpg', 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_u0iJVshq_202404221602350.webp', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdlZ-aipl_EJ2sPZCgRGFnAcTXrzXqVh0M5FeTzhwdMA&s=10', 'https://homas.org/wp-content/uploads/2022/02/Nava-chandee-homam.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-O-U2lljNlDZCSHe6iQyoeg5NjE8y5W1ELBPpn4M7oA&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfiBXtnsEvQgQAjDrd-qpdoTdrHiyyHfpYktv9o8nhCQ&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_rxL82cDTCKhKB8TXThOQ36v_3Ohz47zusJswQekltQ&s=10'
-];
-const whatsappNumber = '919743029249';
-
+const PHONE = '919743029249';
 function WhatsAppIcon() { return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3.2A12.7 12.7 0 0 0 5.1 22.2L3.2 28.8l6.8-1.8A12.7 12.7 0 1 0 16 3.2Zm0 22.9a10.3 10.3 0 0 1-5.2-1.4l-.4-.2-4 1.1 1.1-3.9-.2-.4A10.3 10.3 0 1 1 16 26.1Zm5.7-7.7c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8.5 8.5 0 0 1-2.5-1.5 9.4 9.4 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1-1.1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z" /></svg>; }
+const services: Service[] = [
+  { id: 'pitru-dosha', kn: 'ಪಿತೃ ದೋಷ ನಿವಾರಣೆ', en: 'Pitru Dosha Nivarane', te: 'పితృ దోష నివారణ', image: 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_u0iJVshq_202404221602350.webp' },
+  { id: 'narayana-bali', kn: 'ನಾರಾಯಣ ಬಲಿ', en: 'Narayana Bali', te: 'నారాయణ బలి', image: 'https://dorituals.com/wp-content/uploads/2024/07/narayan-nagbali-trimbakeshwar.jpg' },
+  { id: 'tripindi', kn: 'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ ಕ್ರಿಯಾ ಕರ್ಮ', en: 'Tripindi Shraddha Kriya Karma', te: 'త్రిపిండి శ్రాద్ధ క్రియా కర్మ', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdlZ-aipl_EJ2sPZCgRGFnAcTXrzXqVh0M5FeTzhwdMA&s=10' },
+  { id: 'navagraha', kn: 'ನವಗ್ರಹ ಶಾಂತಿ', en: 'Navagraha Shanti', te: 'నవగ్రహ శాంతి', image: 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_pTtmxopr_202411152235270.jpg' },
+  { id: 'mrityunjaya', kn: 'ಮೃತ್ಯುಂಜಯ ಶಾಂತಿ', en: 'Mrityunjaya Shanti', te: 'మృత్యుంజయ శాంతి', image: '/POOJA1.jpeg' },
+  { id: 'sarpa-samskara', kn: 'ಸರ್ಪ ಸಂಸ್ಕಾರ', en: 'Sarpa Samskara', te: 'సర్ప సంస్కార', image: 'https://dorituals.com/wp-content/uploads/2024/07/narayan-nagbali-trimbakeshwar.jpg' },
+  { id: 'ashlesha-bali', kn: 'ಆಶ್ಲೇಷ ಬಲಿ', en: 'Ashlesha Bali', te: 'ఆశ్లేష బలి', image: '/POOJA2.jpeg' },
+  { id: 'ekadasha-rudra', kn: 'ಏಕಾದಶ ರುದ್ರ', en: 'Ekadasha Rudra', te: 'ఏకాదశ రుద్ర', image: 'https://t4.ftcdn.net/jpg/02/82/22/25/360_F_282222546_qiGzPx9W9BeuZiXJaDr7o3A3AdgisMnY.jpg' },
+  { id: 'shata-rudra', kn: 'ಶತ ರುದ್ರ', en: 'Shata Rudra', te: 'శత రుద్ర', image: 'https://t4.ftcdn.net/jpg/02/82/22/25/360_F_282222546_qiGzPx9W9BeuZiXJaDr7o3A3AdgisMnY.jpg' },
+];
+
+const words = {
+  kn: { home: 'ಮುಖಪುಟ', services: 'ಪೂಜೆಗಳು', booking: 'ಕಾಯ್ದಿರಿಸಿ', call: 'ಈಗ ಕರೆ ಮಾಡಿ', hero: 'ಗೋಕರ್ಣದಲ್ಲಿ ಶಾಸ್ತ್ರೋಕ್ತ ಪೂಜೆಗಳನ್ನು ಕಾಯ್ದಿರಿಸಿ', sub: 'ವೇದಿಕ ಪುರೋಹಿತರೊಂದಿಗೆ ನಿಮ್ಮ ಪೂಜೆ ಮತ್ತು ಧಾರ್ಮಿಕ ಆಚರಣೆಯನ್ನು ಯೋಜಿಸಿ.', offerings: 'ನಮ್ಮ ಪೂಜಾ ಸೇವೆಗಳು', enquiry: 'ಪೂಜಾ ವಿಚಾರಣೆ ಕಳುಹಿಸಿ', name: 'ನಿಮ್ಮ ಹೆಸರು', mobile: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ', place: 'ಸ್ಥಳ / ವಿಳಾಸ', date: 'ಆದ್ಯತೆಯ ದಿನಾಂಕ', devotees: 'ಭಕ್ತರ ಸಂಖ್ಯೆ', notes: 'ಹೆಚ್ಚುವರಿ ವಿವರಗಳು', select: 'ಪೂಜೆ ಆಯ್ಕೆಮಾಡಿ', send: 'ವಾಟ್ಸ್ಆ್ಯಪ್‌ನಲ್ಲಿ ವಿಚಾರಣೆ ಕಳುಹಿಸಿ', formNote: 'ಸಲ್ಲಿಸಿದ ಬಳಿಕ ವಾಟ್ಸ್ಆ್ಯಪ್‌ನಲ್ಲಿ ನಿಮ್ಮ ವಿಚಾರಣೆಯೊಂದಿಗೆ ಸಂದೇಶ ತೆರೆಯುತ್ತದೆ.', about: 'ಗೋಕರ್ಣ ಪುರೋಹಿತ', aboutText: 'ಗೋಕರ್ಣದಲ್ಲಿ ಸಾಂಪ್ರದಾಯಿಕ ವೇದಿಕ ಪೂಜೆ ಮತ್ತು ಕರ್ಮಕಾಂಡಗಳಿಗಾಗಿ ನೇರವಾಗಿ ಪುರೋಹಿತರನ್ನು ಸಂಪರ್ಕಿಸಿ.' },
+  en: { home: 'Home', services: 'Poojas', booking: 'Book a Pooja', call: 'Call Now', hero: 'Book traditional Poojas in Gokarna', sub: 'Plan your pooja or sacred rite directly with a Vedic Purohitha.', offerings: 'Pooja services offered', enquiry: 'Send a Pooja enquiry', name: 'Your name', mobile: 'Mobile number', place: 'Place / address', date: 'Preferred date', devotees: 'Number of devotees', notes: 'Additional details', select: 'Select a Pooja', send: 'Send enquiry on WhatsApp', formNote: 'Submitting opens WhatsApp with your booking enquiry.', about: 'Gokarna Purohitha', aboutText: 'Contact a Purohitha directly for traditional Vedic poojas and rituals in Gokarna.' },
+  te: { home: 'హోమ్', services: 'పూజలు', booking: 'పూజ బుక్ చేయండి', call: 'ఇప్పుడే కాల్ చేయండి', hero: 'గోకర్ణలో సాంప్రదాయ పూజలను బుక్ చేయండి', sub: 'వేద పౌరోహిత్యుడితో మీ పూజ లేదా ధార్మిక కార్యక్రమాన్ని ప్లాన్ చేసుకోండి.', offerings: 'అందుబాటులో ఉన్న పూజలు', enquiry: 'పూజ విచారణ పంపండి', name: 'మీ పేరు', mobile: 'మొబైల్ నంబర్', place: 'స్థలం / చిరునామా', date: 'అనుకూల తేదీ', devotees: 'భక్తుల సంఖ్య', notes: 'అదనపు వివరాలు', select: 'పూజ ఎంచుకోండి', send: 'వాట్స్ఆప్‌లో విచారణ పంపండి', formNote: 'సమర్పించిన తర్వాత మీ వివరాలతో వాట్స్ఆప్ సందేశం తెరుచుకుంటుంది.', about: 'గోకర్ణ పౌరోహిత్యుడు', aboutText: 'గోకర్ణలో సాంప్రదాయ వేద పూజలు, కర్మకాండల కోసం పౌరోహిత్యుడిని నేరుగా సంప్రదించండి.' },
+};
 
 export default function Home() {
-  const [selected, setSelected] = useState<Service | null>(null);
-  const [language, setLanguage] = useState<Language>('kn');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const t = language === 'en' ? en : kn;
-  const serviceName = (service: Service) => language === 'en' ? service.name : service.kannada;
-  const goTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); setMenuOpen(false); };
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const navItems = [['home', t.home], ['poojas', t.poojas], ['priest', t.aboutPriest], ['gallery', t.gallery], ['faq', t.faq], ['contact', t.contact]] as const;
-
+  const [language, setLanguage] = useState<Language>('en');
+  const [selected, setSelected] = useState('');
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [comingSoon, setComingSoon] = useState(false);
+  const t = words[language];
+  const connectLabel = language === 'kn' ? 'ವಾಟ್ಸ್ಆ್ಯಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ' : language === 'te' ? 'వాట్స్ఆప్‌లో సంప్రదించండి' : 'Connect with WhatsApp';
+  const bookNowLabel = language === 'kn' ? 'ಈಗ ಕಾಯ್ದಿರಿಸಿ' : language === 'te' ? 'ఇప్పుడే బుక్ చేయండి' : 'Book Now';
+  const offeringsIntro = language === 'kn' ? 'ಪೂಜೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ ಮತ್ತು ನೇರವಾಗಿ ವಿಚಾರಣೆ ಕಳುಹಿಸಿ. ವಿವರ, ಸಿದ್ಧತೆ ಮತ್ತು ಲಭ್ಯತೆಯನ್ನು ಪುರೋಹಿತರು ದೃಢೀಕರಿಸುತ್ತಾರೆ.' : language === 'te' ? 'పూజను ఎంచుకుని నేరుగా విచారణ పంపండి. వివరాలు, సన్నాహాలు మరియు అందుబాటును పౌరోహిత్యుడు నిర్ధారిస్తారు.' : 'Choose an offering and send a direct booking enquiry. Details, preparations and availability are confirmed by the Purohitha.';
+  const serviceName = (s: Service) => s[language];
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); const data = new FormData(event.currentTarget);
+    const message = `Namaskara, my name is ${data.get('name')}.\n\nI would like to enquire about: ${data.get('pooja')}.\nPreferred date: ${data.get('date') || 'To be discussed'}\nPlace: ${data.get('place')}\nMobile: ${data.get('mobile')}\nNumber of devotees: ${data.get('devotees') || 'To be discussed'}\nAdditional details: ${data.get('notes') || 'None'}\n\nPlease let me know availability and required preparations.`;
+    window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  };
   return <main>
-    <nav className={scrolled ? 'nav nav-solid' : 'nav'}>
-      <button className="brand" onClick={() => goTo('home')} aria-label="Home"><span>ॐ</span><strong>GOKARNA</strong><small>VEDIC PUROHITHA</small></button>
-      <div className={menuOpen ? 'navlinks show' : 'navlinks'}>{navItems.map(([id, label]) => <button key={id} onClick={() => goTo(id)}>{label}</button>)}</div>
-      <div className="nav-actions"><button className="lang" onClick={() => setLanguage(language === 'en' ? 'kn' : 'en')}>{language === 'en' ? 'ಕನ್ನಡ' : 'English'}</button><button className="button compact" onClick={() => goTo('contact')}>{t.bookNow}</button><button className="menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">{menuOpen ? '×' : '☰'}</button></div>
-    </nav>
-
-    <section id="home" className="hero">
-      <div className="hero-art" style={{ backgroundImage: `url("${heroImage}")` }} />
-      <div className="hero-copy"><p className="eyebrow">GOKARNA, KARNATAKA</p><h1>{t.heroTitle}</h1><p>{t.heroText}</p><div className="actions"><button className="button" onClick={() => goTo('poojas')}>{t.bookPooja} <i>→</i></button><a className="call" href={`tel:+${whatsappNumber}`}>{t.callNow}</a></div></div>
-    </section>
-
-    <section className="trust" aria-label="Trust markers">{[t.experience, t.vedic, t.onlineOffline, t.guidance].map((item, index) => <div key={item}><span>0{index + 1}</span><b>{item}</b></div>)}</section>
-
-    <section id="poojas" className="section services"><div className="section-head"><p className="eyebrow">{t.ritualServices}</p><h2>{t.ritualTitle}</h2><p>{t.ritualIntro}</p></div><div className="service-grid">{services.map((service, index) => <article className="service-card" key={service.id}><div className="ritual-image" style={{ backgroundImage: `url("${serviceImages[index]}")` }} role="img" aria-label={service.imageLabel} /><div className="card-copy"><h3>{serviceName(service)}</h3><p>{t.servicePlaceholder}</p><div><button className="text-link" onClick={() => setSelected(service)}>{t.learnMore} →</button><button className="book-link" onClick={() => goTo('contact')}>{t.bookNow}</button></div></div></article>)}</div></section>
-
-    <section id="about" className="section about"><div><p className="eyebrow">{t.aboutGokarnaLabel}</p><h2>{t.aboutGokarnaTitle}</h2></div><div className="about-copy"><p>{t.aboutGokarnaOne}</p><p>{t.aboutGokarnaTwo}</p><p>{t.aboutGokarnaThree}</p></div></section>
-
-    <section id="priest" className="priest"><div className="portrait-placeholder"><span>Professional portrait placeholder</span><b>Vedic Purohitha</b></div><div className="priest-copy"><p className="eyebrow">{t.aboutPriest}</p><h2>{t.priestTitle}</h2><p>{t.priestText}</p><dl><div><dt>{t.experience}</dt><dd>{t.toBeConfirmed}</dd></div><div><dt>{t.tradition}</dt><dd>{t.toBeConfirmed}</dd></div><div><dt>{t.languages}</dt><dd>English · ಕನ್ನಡ</dd></div><div><dt>{t.mission}</dt><dd>{t.toBeConfirmed}</dd></div></dl><button className="button" onClick={() => goTo('contact')}>{t.contactPriest} →</button></div></section>
-
-    <section className="process"><p className="eyebrow">{t.bookingProcess}</p><h2>{t.processTitle}</h2><div className="steps">{[t.choosePooja, t.selectDate, t.confirmDetails, t.receiveConfirmation].map((step, index) => <div key={step}><span>0{index + 1}</span><h3>{step}</h3></div>)}</div></section>
-
-    <section id="gallery" className="section gallery"><div className="section-head centered"><p className="eyebrow">{t.gallery}</p><h2>{t.galleryTitle}</h2><p>{t.galleryIntro}</p></div><div className="gallery-grid">{galleryLabels.map((label, index) => <div className="gallery-image" key={label} style={{ backgroundImage: `url(\"${galleryImages[index]}\")` }} role="img" aria-label={label} />)}</div></section>
-
-    <section className="section why"><p className="eyebrow">{t.whyChoose}</p><h2>{t.whyTitle}</h2><div>{[t.traditionalMethods, t.authenticRituals, t.personalGuidance, t.onlineConsultation, t.experiencedPriest, t.easyBooking].map((item, index) => <article key={item}><span>0{index + 1}</span><h3>{item}</h3></article>)}</div></section>
-
-    <section className="section testimonials"><div className="section-head"><p className="eyebrow">{t.testimonials}</p><h2>{t.testimonialTitle}</h2></div><div className="testimonial-grid">{[1, 2, 3].map(n => <article key={n}><span>★★★★★</span><p>{t.testimonialPlaceholder}</p><b>{t.devoteeName}</b><small>{t.reviewPlaceholder}</small></article>)}</div></section>
-
-    <section id="faq" className="section faq"><div><p className="eyebrow">{t.faq}</p><h2>{t.faqTitle}</h2><p>{t.faqIntro}</p></div><div>{t.faqs.map((item, index) => <article className="faq-item" key={item.question}><button onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}>{item.question}<span>{openFaq === index ? '−' : '+'}</span></button>{openFaq === index ? <p>{item.answer}</p> : null}</article>)}</div></section>
-
-    <section id="contact" className="contact"><div><p className="eyebrow">{t.contactLabel}</p><h2>{t.contactTitle}</h2><p>{t.contactText}</p><a href={`tel:+${whatsappNumber}`}>+91 97430 29249</a><a href="mailto:namaste@gokarnavedicrituals.in">namaste@gokarnavedicrituals.in</a><p>Near Mahabaleshwar Temple, Gokarna, Karnataka 581326</p></div><div className="contact-card"><b>{t.bookingRequest}</b><p>{t.contactFormPlaceholder}</p><a className="button" href={`https://wa.me/${whatsappNumber}`}>{t.sendRequest} →</a><small>{t.mapPlaceholder}</small></div></section>
-
-    <footer><div className="brand"><span>ॐ</span><strong>GOKARNA</strong><small>VEDIC PUROHITHA</small></div><p>{t.footer}</p></footer>
-    <a className="whatsapp" href={`https://wa.me/${whatsappNumber}`} aria-label="Chat on WhatsApp"><WhatsAppIcon /><span>WhatsApp</span></a>
-
-    {selected ? <div className="overlay" role="dialog" aria-modal="true" aria-label={serviceName(selected)} onClick={() => setSelected(null)}><article className="modal" onClick={event => event.stopPropagation()}><button className="close" onClick={() => setSelected(null)} aria-label="Close">×</button><div className="modal-image" style={{ backgroundImage: `url("${serviceImages[services.indexOf(selected)]}")` }} role="img" aria-label={selected.imageLabel} /><div><p className="eyebrow">{t.ritualServices}</p><h2>{serviceName(selected)}</h2><p>{t.detailsPending}</p><dl className="modal-details"><div><dt>{t.benefits}</dt><dd>{t.toBeConfirmed}</dd></div><div><dt>{t.idealFor}</dt><dd>{t.toBeConfirmed}</dd></div><div><dt>{t.duration}</dt><dd>{t.toBeConfirmed}</dd></div></dl><button className="button" onClick={() => { setSelected(null); goTo('contact'); }}>{t.bookNow} →</button></div></article></div> : null}
+    <header><a className="logo" href="#home"><span>ॐ</span><b>GOKARNA</b><small>VEDIC PUROHITHA</small></a><nav><a href="#home">{t.home}</a><a href="#poojas">{t.services}</a><button onClick={() => setBookingOpen(true)}>{t.booking}</button></nav><div className="language-menu"><button className="language-trigger" onClick={() => setLanguageOpen(!languageOpen)} aria-expanded={languageOpen}>{language === 'kn' ? 'ಕನ್ನಡ' : language === 'en' ? 'English' : 'తెలుగు'} <span>⌄</span></button>{languageOpen ? <div className="language-options">{([['kn','ಕನ್ನಡ'],['en','English'],['te','తెలుగు']] as const).map(([code,label]) => <button className={language === code ? 'active' : ''} key={code} onClick={() => { setLanguage(code); setLanguageOpen(false); }}>{label}</button>)}</div> : null}</div></header>
+    <section id="home" className="hero"><div className="hero-image" /><div className="hero-copy"><p>GOKARNA, KARNATAKA</p><h1>{t.hero}</h1><h2>{t.sub}</h2><div><button className="cta" onClick={() => setBookingOpen(true)}>{t.booking} →</button><a className="call" href={`tel:+${PHONE}`}>{t.call}: +91 97430 29249</a></div></div></section>
+    <section id="poojas" className="section"><p className="eyebrow">GOKARNA POOJA BOOKING</p><h2>{t.offerings}</h2><p className="intro">{offeringsIntro}</p><div className="cards">{services.map(service => <article key={service.id}><div style={{ backgroundImage: `url("${service.image}")` }} role="img" aria-label={serviceName(service)} /><h3>{serviceName(service)}</h3><button onClick={() => { setSelected(serviceName(service)); setBookingOpen(true); }}>{t.booking} →</button></article>)}</div><a className="learn-poojas" href={`/poojas?lang=${language}`}>{language === 'kn' ? 'ಪೂಜೆಗಳ ಬಗ್ಗೆ ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ' : language === 'te' ? 'పూజల గురించి మరింత తెలుసుకోండి' : 'Know more about Poojas'} →</a></section>
+    <section className="about"><p className="eyebrow">{t.about}</p><h2>{t.aboutText}</h2><a href={`https://wa.me/${PHONE}`}>WhatsApp +91 97430 29249 →</a></section>
+    <footer>© {new Date().getFullYear()} Gokarna Purohitha · <a href={`tel:+${PHONE}`}>+91 97430 29249</a></footer><a className="whatsapp" href={`https://wa.me/${PHONE}?text=${encodeURIComponent('Namaskara, I would like to enquire about a Pooja in Gokarna.')}`} aria-label="WhatsApp"><WhatsAppIcon /></a>{!bookingOpen ? <div className="mobile-actions"><a href={`tel:+${PHONE}`}>☎ &nbsp; Call Now</a><a href={`https://wa.me/${PHONE}?text=${encodeURIComponent('Namaskara, I would like to enquire about a Pooja in Gokarna.')}`}><WhatsAppIcon /> WhatsApp</a></div> : null}
+    {bookingOpen ? <div className="booking-overlay" role="dialog" aria-modal="true" aria-label={t.enquiry} onClick={() => setBookingOpen(false)}><section className="booking-modal" onClick={event => event.stopPropagation()}><button className="back" onClick={() => setBookingOpen(false)} aria-label="Back">←</button><p className="eyebrow">POOJA ENQUIRY</p><h2>{t.enquiry}</h2><p>{t.formNote}</p><form onSubmit={submit}><label>{t.name}<input name="name" required autoComplete="name" /></label><label>{t.mobile}<input name="mobile" type="tel" required autoComplete="tel" /></label><label>{t.place}<input name="place" required autoComplete="street-address" /></label><label>{t.select}<select name="pooja" required value={selected} onChange={e => setSelected(e.target.value)}><option value="">{t.select}</option>{services.map(s => <option value={serviceName(s)} key={s.id}>{serviceName(s)}</option>)}</select></label><label>{t.date}<input name="date" type="date" /></label><label>{t.devotees}<input name="devotees" type="number" min="1" /></label><label className="wide">{t.notes}<textarea name="notes" rows={3} /></label><div className="modal-actions"><button className="whatsapp-action" type="submit">{connectLabel}</button><button className="book-action" type="button" onClick={() => setComingSoon(true)}>{bookNowLabel}</button></div>{comingSoon ? <p className="coming-soon">{language === 'kn' ? 'ಆನ್‌ಲೈನ್ ಕಾಯ್ದಿರಿಸುವಿಕೆ ಶೀಘ್ರದಲ್ಲೇ ಲಭ್ಯವಾಗಲಿದೆ.' : language === 'te' ? 'ఆన్‌లైన్ బుకింగ్ త్వరలో అందుబాటులో ఉంటుంది.' : 'Online booking is coming soon.'}</p> : null}</form></section></div> : null}
   </main>;
 }
