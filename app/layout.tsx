@@ -5,6 +5,21 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://gokarnapurohita.com'),
   title: 'Gokarna Purohita | Pooja Booking in Gokarna',
   description: 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.',
+  keywords: [
+    'Gokarna Purohit',
+    'Gokarna Priest',
+    'Gokarna Temple Pooja',
+    'Gokarna Mahabaleshwar Temple',
+    'Mahaganapati Temple Gokarna',
+    'Gokarna Rudrabhisheka',
+    'Narayana Bali Gokarna',
+    'Tripindi Shraddha Gokarna',
+    'Pitru Karya Gokarna',
+    'Gokarna Pandit Booking',
+    'Vedic Pooja in Gokarna',
+    'Gokarna Homam Services',
+    'Online Pooja Booking Gokarna'
+  ],
   alternates: { canonical: '/' },
   openGraph: { title: 'Gokarna Purohita | Pooja Booking in Gokarna', description: 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.', url: 'https://gokarnapurohita.com' },
 };
