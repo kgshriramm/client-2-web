@@ -1,10 +1,15 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const siteUrl = 'https://www.gokarnapurohita.com';
+const siteName = 'Gokarna Purohita';
+const defaultTitle = 'Gokarna Purohita | Pooja Booking in Gokarna';
+const defaultDescription = 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://gokarnapurohita.com'),
-  title: 'Gokarna Purohita | Pooja Booking in Gokarna',
-  description: 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.',
+  metadataBase: new URL(siteUrl),
+  title: { default: defaultTitle, template: '%s | Gokarna Purohita' },
+  description: defaultDescription,
   keywords: [
     'Gokarna Purohit',
     'Gokarna Priest',
@@ -20,8 +25,30 @@ export const metadata: Metadata = {
     'Gokarna Homam Services',
     'Online Pooja Booking Gokarna'
   ],
-  alternates: { canonical: '/' },
-  openGraph: { title: 'Gokarna Purohita | Pooja Booking in Gokarna', description: 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.', url: 'https://gokarnapurohita.com' },
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-US': '/?lang=en',
+      'kn-IN': '/?lang=kn',
+      'te-IN': '/?lang=te'
+    }
+  },
+  openGraph: {
+    title: defaultTitle,
+    description: defaultDescription,
+    url: siteUrl,
+    type: 'website',
+    siteName,
+    locale: 'en_US',
+    alternateLocale: ['kn_IN', 'te_IN'],
+    images: [{ url: '/og-image.svg', width: 1200, height: 630, alt: 'Gokarna Purohita - Traditional Pooja Booking in Gokarna' }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: defaultTitle,
+    description: defaultDescription,
+    images: ['/og-image.svg']
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

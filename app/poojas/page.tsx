@@ -2,8 +2,22 @@ import type { Metadata } from 'next';
 import { poojaCopy, poojaNames, poojas, type PoojaLanguage } from './data';
 
 export const metadata: Metadata = {
-  title: 'Poojas in Gokarna | Gokarna Purohita',
+  title: 'Poojas in Gokarna',
   description: 'Browse traditional Poojas and ritual services available in Gokarna.',
+  alternates: { canonical: '/poojas' },
+  openGraph: {
+    title: 'Poojas in Gokarna | Gokarna Purohita',
+    description: 'Browse traditional Poojas and ritual services available in Gokarna.',
+    url: 'https://www.gokarnapurohita.com/poojas',
+    type: 'website',
+    images: [{ url: '/og-image.svg', width: 1200, height: 630, alt: 'Poojas in Gokarna' }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Poojas in Gokarna | Gokarna Purohita',
+    description: 'Browse traditional Poojas and ritual services available in Gokarna.',
+    images: ['/og-image.svg']
+  }
 };
 
 function selectedLanguage(value: string | string[] | undefined): PoojaLanguage {

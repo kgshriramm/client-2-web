@@ -11,7 +11,33 @@ function selectedLanguage(value: string | string[] | undefined): PoojaLanguage {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const pooja = poojas.find(([id]) => id === slug);
-  return pooja ? { title: `${pooja[1]} in Gokarna | Gokarna Purohita`, description: `Enquire about ${pooja[1]} with a Gokarna Purohita.` } : {};
+
+  if (!pooja) {
+    return {};
+  }
+
+  const title = `${pooja[1]} in Gokarna`;
+  const description = `Enquire about ${pooja[1]} with a Gokarna Purohita.`;
+  const canonicalUrl = `https://www.gokarnapurohita.com/poojas/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/poojas/${slug}` },
+    openGraph: {
+      title: `${title} | Gokarna Purohita`,
+      description,
+      url: canonicalUrl,
+      type: 'article',
+      images: [{ url: '/og-image.svg', width: 1200, height: 630, alt: title }]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | Gokarna Purohita`,
+      description,
+      images: ['/og-image.svg']
+    }
+  };
 }
 
 export default async function PoojaDetail({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ lang?: string | string[] }> }) {
