@@ -49,6 +49,10 @@ export const metadata: Metadata = {
   verification: {
     google: 'KfF8Pd4-E2nZdCkEtgV0RmsWAkrEtsVMMOeA5_9QbkI'
   },
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml', sizes: '48x48' }],
+    apple: [{ url: '/icon.svg', type: 'image/svg+xml', sizes: '180x180' }]
+  },
   alternates: {
     canonical: '/',
     languages: {
@@ -80,6 +84,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     '@context': 'https://schema.org', '@type': 'LocalBusiness',
     name: siteName,
     url: siteUrl,
+    logo: `${siteUrl}/icon.svg`,
+    image: `${siteUrl}/icon.svg`,
     description: defaultDescription,
     address: { '@type': 'PostalAddress', addressLocality: 'Gokarna', addressRegion: 'Karnataka', postalCode: '581326', addressCountry: 'IN' },
     telephone: '+919743029249',
