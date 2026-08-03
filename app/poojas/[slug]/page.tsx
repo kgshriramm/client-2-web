@@ -4,6 +4,18 @@ import { poojaCopy, poojaNames, poojas, type PoojaLanguage } from '../data';
 
 export function generateStaticParams() { return poojas.map(([slug]) => ({ slug })); }
 
+const serviceKeywords: Record<string, string[]> = {
+  'pitru-dosha': ['Pitru Dosha Pooja Gokarna', 'Pitru Dosha Nivarane Gokarna', 'Pitru Karya Gokarna', 'ancestor rituals Gokarna'],
+  'narayana-bali': ['Narayana Bali Gokarna', 'Narayana Bali Pooja Gokarna', 'Narayan Nagbali Gokarna'],
+  tripindi: ['Tripindi Shraddha Gokarna', 'Tripindi Shraddha Kriya Gokarna', 'Tripindi Pooja Gokarna'],
+  navagraha: ['Navagraha Shanti Gokarna', 'Navagraha Pooja Gokarna', 'Graha Shanti Gokarna'],
+  mrityunjaya: ['Mrityunjaya Shanti Gokarna', 'Maha Mrityunjaya Pooja Gokarna', 'Mrityunjaya Homa Gokarna'],
+  'sarpa-samskara': ['Sarpa Samskara Gokarna', 'Sarpa Dosha Pooja Gokarna', 'Naga Dosha Pooja Gokarna'],
+  'ashlesha-bali': ['Ashlesha Bali Gokarna', 'Ashlesha Bali Pooja Gokarna', 'Sarpa Dosha Nivarane Gokarna'],
+  'ekadasha-rudra': ['Ekadasha Rudra Gokarna', 'Ekadasha Rudrabhisheka Gokarna', 'Rudra Pooja Gokarna'],
+  'shata-rudra': ['Shata Rudra Gokarna', 'Shata Rudrabhisheka Gokarna', 'Maha Rudra Pooja Gokarna']
+};
+
 function selectedLanguage(value: string | string[] | undefined): PoojaLanguage {
   return value === 'en' || value === 'te' || value === 'kn' ? value : 'kn';
 }
@@ -17,12 +29,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const title = `${pooja[1]} in Gokarna`;
-  const description = `Enquire about ${pooja[1]} with a Gokarna Purohita.`;
+  const description = `Book ${pooja[1]} in Gokarna with a trusted Vedic Purohita. Enquire for traditional procedure, preparation, date and availability.`;
   const canonicalUrl = `https://www.gokarnapurohita.com/poojas/${slug}`;
 
   return {
     title,
     description,
+    keywords: [pooja[1], `${pooja[1]} Gokarna`, `Book ${pooja[1]} in Gokarna`, 'Gokarna Purohita', 'Gokarna Pooja Booking', ...(serviceKeywords[slug] ?? [])],
     alternates: { canonical: `/poojas/${slug}` },
     openGraph: {
       title: `${title} | Gokarna Purohita`,

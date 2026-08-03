@@ -4,7 +4,7 @@ import './globals.css';
 const siteUrl = 'https://www.gokarnapurohita.com';
 const siteName = 'Gokarna Purohita';
 const defaultTitle = 'Gokarna Purohita | Pooja Booking in Gokarna';
-const defaultDescription = 'Book traditional poojas and Vedic rituals in Gokarna directly with a Purohita.';
+const defaultDescription = 'Book traditional Poojas in Gokarna with a trusted Vedic Purohita for Pitru Karya, Narayana Bali, Tripindi Shraddha, Rudrabhisheka, Navagraha Shanti and more.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -23,7 +23,28 @@ export const metadata: Metadata = {
     'Gokarna Pandit Booking',
     'Vedic Pooja in Gokarna',
     'Gokarna Homam Services',
-    'Online Pooja Booking Gokarna'
+    'Online Pooja Booking Gokarna',
+    'Gokarna Pooja Booking',
+    'Pooja Booking in Gokarna',
+    'Gokarna Pandit',
+    'Gokarna Pujari',
+    'Gokarna Temple Priest',
+    'Gokarna Mahabaleshwar Temple Pooja',
+    'Mahaganapati Temple Gokarna Pooja',
+    'Pitru Dosha Pooja Gokarna',
+    'Narayana Bali Pooja Gokarna',
+    'Tripindi Shraddha Pooja Gokarna',
+    'Navagraha Shanti Pooja Gokarna',
+    'Mrityunjaya Shanti Gokarna',
+    'Sarpa Samskara Gokarna',
+    'Ashlesha Bali Gokarna',
+    'Ekadasha Rudra Gokarna',
+    'Shata Rudra Gokarna',
+    'Hindu Rituals in Gokarna',
+    'Vedic Rituals Karnataka',
+    'ಗೋಕರ್ಣ ಪೂಜೆ ಬುಕ್ಕಿಂಗ್',
+    'ಗೋಕರ್ಣ ಪುರೋಹಿತ',
+    'గోకర్ణ పూజ బుకింగ్'
   ],
   alternates: {
     canonical: '/',
@@ -54,9 +75,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const schema = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness',
-    name: 'Gokarna Purohita', url: 'https://gokarnapurohita.com', description: 'Traditional Hindu poojas and Vedic rituals in Gokarna, Karnataka.',
+    name: siteName,
+    url: siteUrl,
+    description: defaultDescription,
     address: { '@type': 'PostalAddress', addressLocality: 'Gokarna', addressRegion: 'Karnataka', postalCode: '581326', addressCountry: 'IN' },
-    telephone: '+919743029249', priceRange: '₹₹'
+    telephone: '+919743029249',
+    priceRange: '₹₹',
+    areaServed: { '@type': 'City', name: 'Gokarna' },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Vedic Pooja Services in Gokarna',
+      itemListElement: [
+        'Pitru Dosha Nivarane', 'Narayana Bali', 'Tripindi Shraddha Kriya Karma',
+        'Navagraha Shanti', 'Mrityunjaya Shanti', 'Sarpa Samskara',
+        'Ashlesha Bali', 'Ekadasha Rudra', 'Shata Rudra'
+      ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name, areaServed: 'Gokarna, Karnataka' } }))
+    }
   };
   return <html lang="kn"><body>{children}<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /></body></html>;
 }

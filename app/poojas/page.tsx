@@ -4,6 +4,12 @@ import { poojaCopy, poojaNames, poojas, type PoojaLanguage } from './data';
 export const metadata: Metadata = {
   title: 'Poojas in Gokarna',
   description: 'Browse traditional Poojas and ritual services available in Gokarna.',
+  keywords: [
+    'Poojas in Gokarna', 'Gokarna Pooja Booking', 'Pooja Booking in Gokarna',
+    'Gokarna Purohita', 'Gokarna Priest', 'Gokarna Pandit', 'Vedic Poojas Gokarna',
+    'Pitru Dosha Pooja Gokarna', 'Narayana Bali Gokarna', 'Tripindi Shraddha Gokarna',
+    'Navagraha Shanti Gokarna', 'Rudra Pooja Gokarna'
+  ],
   alternates: { canonical: '/poojas' },
   openGraph: {
     title: 'Poojas in Gokarna | Gokarna Purohita',
