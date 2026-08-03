@@ -46,6 +46,9 @@ export const metadata: Metadata = {
     'ಗೋಕರ್ಣ ಪುರೋಹಿತ',
     'గోకర్ణ పూజ బుకింగ్'
   ],
+  verification: {
+    google: 'KfF8Pd4-E2nZdCkEtgV0RmsWAkrEtsVMMOeA5_9QbkI'
+  },
   alternates: {
     canonical: '/',
     languages: {
