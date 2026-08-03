@@ -88,7 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     image: `${siteUrl}/icon.svg`,
     description: defaultDescription,
     address: { '@type': 'PostalAddress', addressLocality: 'Gokarna', addressRegion: 'Karnataka', postalCode: '581326', addressCountry: 'IN' },
-    telephone: '+919743029249',
+    telephone: '+918660751425',
     priceRange: '₹₹',
     areaServed: { '@type': 'City', name: 'Gokarna' },
     hasOfferCatalog: {

@@ -53,7 +53,7 @@ export default async function PoojasPage({ searchParams }: { searchParams: Promi
       </div>
     </section>
     <div className="page-actions">
-      <a href="tel:+919743029249">☎ {language === 'kn' ? 'ಈಗ ಕರೆ ಮಾಡಿ' : language === 'te' ? 'ఇప్పుడే కాల్ చేయండి' : 'Call Now'}</a>
+      <a href="tel:+918660751425">☎ {language === 'kn' ? 'ಈಗ ಕರೆ ಮಾಡಿ' : language === 'te' ? 'ఇప్పుడే కాల్ చేయండి' : 'Call Now'}</a>
       <a href={`https://wa.me/919743029249?text=${encodeURIComponent(language === 'kn' ? 'ನಮಸ್ಕಾರ, ಗೋಕರ್ಣದಲ್ಲಿ ಪೂಜೆಯ ಬಗ್ಗೆ ವಿಚಾರಿಸಬೇಕು.' : language === 'te' ? 'నమస్కారం, గోకర్ణలో పూజ గురించి విచారించాలనుకుంటున్నాను.' : 'Namaskara, I would like to enquire about a Pooja in Gokarna.')}`}>{copy.whatsapp}</a>
     </div>
   </main>;
