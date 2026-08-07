@@ -38,7 +38,7 @@ export default function Home() {
   }, []);
   const t = words[language];
   const seoSummary = t.seoKeywords;
-  const connectLabel = language === 'kn' ? 'ಈಗ संपर्कಿಸಿ' : language === 'te' ? 'ఇప్పుడే సంప్రదించండి' : 'Contact Now';
+  const connectLabel = language === 'kn' ? 'ಈಗ ಸಂಪರ್ಕಿಸಿ' : language === 'te' ? 'ఇప్పుడే సంప్రదించండి' : 'Contact Now';
   const bookNowLabel = language === 'kn' ? 'ಈಗ ಕಾಯ್ದಿರಿಸಿ' : language === 'te' ? 'ఇప్పుడే బుక్ చేయండి' : 'Book Now';
   const offeringsIntro = language === 'kn' ? 'ಪೂಜೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ ಮತ್ತು ನೇರವಾಗಿ ವಿಚಾರಣೆ ಕಳುಹಿಸಿ. ವಿವರ, ಸಿದ್ಧತೆ ಮತ್ತು ಲಭ್ಯತೆಯನ್ನು ಪುರೋಹಿತರು ದೃಢೀಕರಿಸುತ್ತಾರೆ.' : language === 'te' ? 'పూజను ఎంచుకుని నేరుగా విచారణ పంపండి. వివరాలు, సన్నాహాలు మరియు అందుబాటును పౌరోహిత్యుడు నిర్ధారిస్తారు.' : 'Choose an offering and send a direct booking enquiry. Details, preparations and availability are confirmed by the Purohitha.';
   const serviceName = (s: Service) => s[language];
