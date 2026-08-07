@@ -3,7 +3,7 @@ export const poojas = [
   ['narayana-bali','Narayana Bali','https://dorituals.com/wp-content/uploads/2024/07/narayan-nagbali-trimbakeshwar.jpg'],
   ['tripindi','Tripindi Shraddha Kriya Karma','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdlZ-aipl_EJ2sPZCgRGFnAcTXrzXqVh0M5FeTzhwdMA&s=10'],
   ['navagraha','Navagraha Shanti','https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_pTtmxopr_202411152235270.jpg'],
-  ['mrityunjaya','Mrityunjaya Shanti','/pooja-images/mrityunjaya-shanti.jpg'],
+  ['mrityunjaya','Mrityunjaya Shanti','https://vedniketan.org/wp-content/uploads/2019/09/homa.jpg'],
   ['sarpa-samskara','Sarpa Samskara','https://famousastrologycentre.com/wp-content/uploads/2025/01/WhatsApp-Image-2025-01-16-at-1.18.10-PM.jpeg'],
   ['ashlesha-bali','Ashlesha Bali','/POOJA2.jpeg'],
   ['ekadasha-rudra','Ekadasha Rudra','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK6BYFwLLWlihFjZJhKcZzVzOBtPtI6p4usGXZTzq0-NKrVX-pRt_6FvMX&s=10'],

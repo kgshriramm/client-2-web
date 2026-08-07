@@ -13,7 +13,7 @@ const services: Service[] = [
   { id: 'narayana-bali', kn: 'ನಾರಾಯಣ ಬಲಿ', en: 'Narayana Bali', te: 'నారాయణ బలి', image: 'https://dorituals.com/wp-content/uploads/2024/07/narayan-nagbali-trimbakeshwar.jpg' },
   { id: 'tripindi', kn: 'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ ಕ್ರಿಯಾ ಕರ್ಮ', en: 'Tripindi Shraddha Kriya Karma', te: 'త్రిపిండి శ్రాద్ధ క్రియా కర్మ', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdlZ-aipl_EJ2sPZCgRGFnAcTXrzXqVh0M5FeTzhwdMA&s=10' },
   { id: 'navagraha', kn: 'ನವಗ್ರಹ ಶಾಂತಿ', en: 'Navagraha Shanti', te: 'నవగ్రహ శాంతి', image: 'https://temple.yatradham.org/public/Product/puja-rituals/puja-rituals_pTtmxopr_202411152235270.jpg' },
-  { id: 'mrityunjaya', kn: 'ಮೃತ್ಯುಂಜಯ ಶಾಂತಿ', en: 'Mrityunjaya Shanti', te: 'మృత్యుంజయ శాంతి', image: '/images5.jpeg' },
+  { id: 'mrityunjaya', kn: 'ಮೃತ್ಯುಂಜಯ ಶಾಂತಿ', en: 'Mrityunjaya Shanti', te: 'మృత్యుంజయ శాంతి', image: 'https://vedniketan.org/wp-content/uploads/2019/09/homa.jpg' },
   { id: 'sarpa-samskara', kn: 'ಸರ್ಪ ಸಂಸ್ಕಾರ', en: 'Sarpa Samskara', te: 'సర్ప సంస్కార', image: 'https://famousastrologycentre.com/wp-content/uploads/2025/01/WhatsApp-Image-2025-01-16-at-1.18.10-PM.jpeg' },
   { id: 'ashlesha-bali', kn: 'ಆಶ್ಲೇಷ ಬಲಿ', en: 'Ashlesha Bali', te: 'ఆశ్లేష బలి', image: '/POOJA2.jpeg' },
   { id: 'ekadasha-rudra', kn: 'ಏಕಾದಶ ರುದ್ರ', en: 'Ekadasha Rudra', te: 'ఏకాదశ రుద్ర', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK6BYFwLLWlihFjZJhKcZzVzOBtPtI6p4usGXZTzq0-NKrVX-pRt_6FvMX&s=10' },
@@ -27,7 +27,7 @@ const words = {
 };
 
 export default function Home() {
-  const [language, setLanguage] = useState<Language>('kn');
+  const [language, setLanguage] = useState<Language>('en');
   const [selected, setSelected] = useState('');
   const [languageOpen, setLanguageOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
