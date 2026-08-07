@@ -5,15 +5,15 @@ import { poojaCopy, poojaNames, poojas, type PoojaLanguage } from '../data';
 export function generateStaticParams() { return poojas.map(([slug]) => ({ slug })); }
 
 const serviceKeywords: Record<string, string[]> = {
-  'pitru-dosha': ['Pitru Dosha Pooja Gokarna', 'Pitru Dosha Nivarane Gokarna', 'Pitru Karya Gokarna', 'ancestor rituals Gokarna'],
-  'narayana-bali': ['Narayana Bali Gokarna', 'Narayana Bali Pooja Gokarna', 'Narayan Nagbali Gokarna'],
-  tripindi: ['Tripindi Shraddha Gokarna', 'Tripindi Shraddha Kriya Gokarna', 'Tripindi Pooja Gokarna'],
-  navagraha: ['Navagraha Shanti Gokarna', 'Navagraha Pooja Gokarna', 'Graha Shanti Gokarna'],
-  mrityunjaya: ['Mrityunjaya Shanti Gokarna', 'Maha Mrityunjaya Pooja Gokarna', 'Mrityunjaya Homa Gokarna'],
-  'sarpa-samskara': ['Sarpa Samskara Gokarna', 'Sarpa Dosha Pooja Gokarna', 'Naga Dosha Pooja Gokarna'],
-  'ashlesha-bali': ['Ashlesha Bali Gokarna', 'Ashlesha Bali Pooja Gokarna', 'Sarpa Dosha Nivarane Gokarna'],
-  'ekadasha-rudra': ['Ekadasha Rudra Gokarna', 'Ekadasha Rudrabhisheka Gokarna', 'Rudra Pooja Gokarna'],
-  'shata-rudra': ['Shata Rudra Gokarna', 'Shata Rudrabhisheka Gokarna', 'Maha Rudra Pooja Gokarna']
+  'pitru-dosha': ['Pitru Dosha Pooja Gokarna', 'Pitru Dosha Nivarane Gokarna', 'Pitru Karya Gokarna', 'ancestor rituals Gokarna', 'gokarna pitru dosha pooja', 'pitru dosha pooja in gokarna', 'pitru dosha pooja cost in gokarna'],
+  'narayana-bali': ['Narayana Bali Gokarna', 'Narayana Bali Pooja Gokarna', 'Narayan Nagbali Gokarna', 'narayana bali pooja in gokarna', 'narayana bali pooja in gokarna cost'],
+  tripindi: ['Tripindi Shraddha Gokarna', 'Tripindi Shraddha Kriya Gokarna', 'Tripindi Pooja Gokarna', 'gokarna temple pooja details'],
+  navagraha: ['Navagraha Shanti Gokarna', 'Navagraha Pooja Gokarna', 'Graha Shanti Gokarna', 'gokarna temple pooja list'],
+  mrityunjaya: ['Mrityunjaya Shanti Gokarna', 'Maha Mrityunjaya Pooja Gokarna', 'Mrityunjaya Homa Gokarna', 'gokarna pooja details'],
+  'sarpa-samskara': ['Sarpa Samskara Gokarna', 'Sarpa Dosha Pooja Gokarna', 'Naga Dosha Pooja Gokarna', 'gokarna pooja'],
+  'ashlesha-bali': ['Ashlesha Bali Gokarna', 'Ashlesha Bali Pooja Gokarna', 'Sarpa Dosha Nivarane Gokarna', 'pooja at home'],
+  'ekadasha-rudra': ['Ekadasha Rudra Gokarna', 'Ekadasha Rudrabhisheka Gokarna', 'Rudra Pooja Gokarna', 'online pooja booking'],
+  'shata-rudra': ['Shata Rudra Gokarna', 'Shata Rudrabhisheka Gokarna', 'Maha Rudra Pooja Gokarna', 'pandit ji near me']
 };
 
 function selectedLanguage(value: string | string[] | undefined): PoojaLanguage {
@@ -76,6 +76,7 @@ export default async function PoojaDetail({ params, searchParams }: { params: Pr
     <article>
       <h2>{copy.enquiry}</h2>
       <p>{copy.detail}</p>
+      <p style={{ marginTop: '0.75rem' }}>{language === 'kn' ? 'ಈ ಪೂಜೆಗೆ ಗೋಕರ್ಣ ಪೂಜೆ, ಗೋಕರ್ಣ ಪಿತೃ ದೋಷ ಪೂಜೆ ಬೆಲೆ, ನಾರಾಯಣ ಬಲಿ ಪೂಜೆ ಗೋಕರ್ಣ, ಪಂಡಿತ್ ಜೀ Näheಮೀ, ಆನ್ಲೈನ್ ಪೂಜಾ ಬುಕಿಂಗ್ ಮತ್ತು ಮನೆಪೂಜೆ haqida ಸಂಬಂಧಿಸಿದ ವಿವರಗಳನ್ನು ಇಲ್ಲಿ проверಿಸಬಹುದು.' : language === 'te' ? 'ఈ పూజ కోసం గోకర్ణ పూజ, గోకర్ణ పితృ దోష పూజ ధర, నారాయణ బలి పూజ గోకర్ణ, పండిత్ జీ నెర్ మీ, ఆన్లైన్ పూజా బుకింగ్ మరియు హోమ్ పూజ వివరాలు ఇక్కడ చూడవచ్చు.' : 'This service page is aligned with searches such as Gokarna pooja, Gokarna pitru dosha pooja cost, Narayana Bali pooja in Gokarna, pandit ji near me, online pooja booking, and pooja at home.'}</p>
       <a href={`https://wa.me/919743029249?text=${encodeURIComponent(whatsappMessage)}`}>{copy.whatsapp} →</a>
     </article>
     <div className="page-actions">

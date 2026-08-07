@@ -8,7 +8,12 @@ export const metadata: Metadata = {
     'Poojas in Gokarna', 'Gokarna Pooja Booking', 'Pooja Booking in Gokarna',
     'Gokarna Purohita', 'Gokarna Priest', 'Gokarna Pandit', 'Vedic Poojas Gokarna',
     'Pitru Dosha Pooja Gokarna', 'Narayana Bali Gokarna', 'Tripindi Shraddha Gokarna',
-    'Navagraha Shanti Gokarna', 'Rudra Pooja Gokarna'
+    'Navagraha Shanti Gokarna', 'Rudra Pooja Gokarna', 'gokarna pooja', 'gokarna pitru dosha pooja cost',
+    'narayana bali pooja in gokarna', 'narayana bali pooja in gokarna cost', 'gokarna pitru dosha pooja',
+    'gokarna temple pooja list', 'pitru dosha pooja in gokarna', 'gokarna temple pooja details',
+    'pitru dosha pooja cost in gokarna', 'gokarna pooja details', 'pandit ji', 'pandit',
+    'pandit near me', 'pandit ji near me', 'pooja at home', 'online pooja booking', 'pandit in bangalore',
+    'kukke subramanya pooja booking'
   ],
   alternates: { canonical: '/poojas' },
   openGraph: {
@@ -44,6 +49,7 @@ export default async function PoojasPage({ searchParams }: { searchParams: Promi
       <p className="eyebrow">{copy.label}</p>
       <h1>{copy.title}</h1>
       <p>{copy.intro}</p>
+      <p style={{ marginTop: '0.75rem' }}>{language === 'kn' ? 'ಗೋಕರ್ಣ ಪೂಜೆ, ಗೋಕರ್ಣ ಪೂಜಾ ವಿವರಗಳು, ನಾರಾಯಣ ಬಲಿ ಪೂಜೆ ಗೋಕರ್ಣ, ಪಿತೃ ದೋಷ ಪೂಜೆ ಬೆಲೆ ಮತ್ತು ಆನ್ಲೈನ್ ಪೂಜಾ ಬುಕಿಂಗ್‌ಗೆ ಸಂಬಂಧಿಸಿದ ಈ ಪುಟವನ್ನು ನೋಡಬಹುದು.' : language === 'te' ? 'గోకర్ణ పూజ, గోకర్ణ పూజ వివరాలు, నారాయణ బలి పూజ గోకర్ణ, పితృ దోష పూజ ధర మరియు ఆన్లైన్ పూజా బుకింగ్ కోసం ఈ పేజీ ఉపయోగపడుతుంది.' : 'This page covers common searches such as Gokarna pooja, Gokarna temple pooja details, Narayana Bali pooja in Gokarna, pitru dosha pooja cost in Gokarna, and online pooja booking.'}</p>
       <div className="pooja-list">
         {poojas.map(([slug, , image]) => <a href={`/poojas/${slug}?lang=${language}`} key={slug}>
           <div className="pooja-card-image"><img src={image} alt={poojaNames[language][slug]} width="720" height="405" loading="lazy" /></div>
