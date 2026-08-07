@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from 'react';
 
 type Language = 'kn' | 'en' | 'te';
 type Service = { id: string; kn: string; en: string; te: string; image: string };
+type Review = { id: string; name: string; rating: number; text: string; created_at: string };
 
 const CALL_PHONE = '918660751425';
 const WHATSAPP_PHONE = '919743029249';
@@ -32,9 +33,22 @@ export default function Home() {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [comingSoon, setComingSoon] = useState(false);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewStatus, setReviewStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   useEffect(() => {
     const requestedLanguage = new URLSearchParams(window.location.search).get('lang');
     if (requestedLanguage === 'en' || requestedLanguage === 'kn' || requestedLanguage === 'te') setLanguage(requestedLanguage);
+  }, []);
+  useEffect(() => {
+    let active = true;
+    fetch('/api/reviews')
+      .then(response => response.ok ? response.json() : Promise.reject())
+      .then(({ reviews: loadedReviews }) => { if (active) setReviews(loadedReviews); })
+      .catch(() => { if (active) setReviewStatus('error'); });
+    return () => { active = false; };
   }, []);
   const t = words[language];
   const seoSummary = t.seoKeywords;
@@ -175,12 +189,49 @@ export default function Home() {
     const message = `Namaskara, my name is ${data.get('name')}.\n\nI would like to enquire about: ${data.get('pooja')}.\nPreferred date: ${data.get('date') || 'To be discussed'}\nPlace: ${data.get('place')}\nMobile: ${data.get('mobile')}\nNumber of devotees: ${data.get('devotees') || 'To be discussed'}\nAdditional details: ${data.get('notes') || 'None'}\n\nPlease let me know availability and required preparations.`;
     window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
+  const submitReview = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setReviewStatus('submitting');
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: reviewName, rating: reviewRating, text: reviewText }),
+      });
+      if (!response.ok) throw new Error('Review submission failed');
+      const { review } = await response.json();
+      setReviews(current => [review, ...current]);
+      setReviewName('');
+      setReviewRating(5);
+      setReviewText('');
+      setReviewStatus('success');
+    } catch {
+      setReviewStatus('error');
+    }
+  };
   return <main>
     <header><a className="logo" href="#home"><span>ॐ</span><b>GOKARNA</b><small>VEDIC PUROHITHA</small></a><nav><a href="#home">{t.home}</a><a href="#poojas">{t.services}</a><button onClick={() => setBookingOpen(true)}>{t.booking}</button></nav><div className="language-menu"><button className="language-trigger" onClick={() => setLanguageOpen(!languageOpen)} aria-expanded={languageOpen}>{language === 'kn' ? 'ಕನ್ನಡ' : language === 'en' ? 'English' : 'తెలుగు'} <span>⌄</span></button>{languageOpen ? <div className="language-options">{([['kn','ಕನ್ನಡ'],['en','English'],['te','తెలుగు']] as const).map(([code,label]) => <button className={language === code ? 'active' : ''} key={code} onClick={() => { setLanguage(code); setLanguageOpen(false); }}>{label}</button>)}</div> : null}</div></header>
     <section id="home" className="hero"><div className="hero-image" /><div className="hero-copy"><p>GOKARNA, KARNATAKA</p><h1>{t.hero}</h1><h2>{t.sub}</h2><div><button className="cta" onClick={() => setBookingOpen(true)}>{t.booking} →</button><a className="call" href={`tel:+${CALL_PHONE}`}>{t.call}: +91 86607 51425</a></div></div></section>
     <section id="poojas" className="section"><p className="eyebrow">GOKARNA POOJA BOOKING</p><h2>{t.offerings}</h2><p className="intro">{offeringsIntro}</p><p className="intro" style={{ marginTop: '0.75rem' }}>{t.keywordIntro}</p><p className="intro" style={{ marginTop: '0.75rem', fontSize: '0.95rem' }}>{seoSummary}</p><div className="cards">{services.map(service => <article key={service.id}><div style={{ backgroundImage: `url("${service.image}")` }} role="img" aria-label={serviceName(service)} /><h3>{serviceName(service)}</h3><button onClick={() => { setSelected(serviceName(service)); setBookingOpen(true); }}>{t.booking} →</button></article>)}</div><a className="learn-poojas" href={`/poojas?lang=${language}`}>{language === 'kn' ? 'ಪೂಜೆಗಳ ಬಗ್ಗೆ ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ' : language === 'te' ? 'పూజల గురించి మరింత తెలుసుకోండి' : 'Know more about Poojas'} →</a><div className="pooja-image-strip" aria-label="Pooja gallery"><img src="/place-images/image1.jpeg" alt="Pooja ritual" loading="lazy" /><img src="/place-images/image2.jpeg" alt="Pooja ritual" loading="lazy" /><img src="/place-images/image3.jpeg" alt="Pooja ritual" loading="lazy" /><img src="/place-images/image4.jpeg" alt="Pooja ritual" loading="lazy" /></div></section>
     <section className="place"><div className="place-header"><p className="eyebrow">{language === 'kn' ? 'ಗೋಕರ್ಣ ಪರಿಚಯ' : language === 'te' ? 'గోకర్ణ పరిచయం' : 'About Gokarna'}</p><h2>{language === 'kn' ? 'Gokarna Purohita ಮತ್ತು ಗೋಕರ್ಣದ ಧಾರ್ಮಿಕ ಮಹತ್ತ್ವ' : language === 'te' ? 'Gokarna Purohita మరియు గోకర్ణం ధಾರ్మిక ప్రಾಮుఖ్యత' : 'Gokarna Purohita and the Spiritual Significance of Gokarna'}</h2></div>{placeSections.map((section, index) => <article key={section.id} className={index % 2 === 1 ? 'reverse' : ''}><div className="place-image"><img src={section.image} alt={section.heading[language]} width="850" height="508" loading="lazy" /></div><div className="place-copy"><p className="eyebrow">{section.heading[language]}</p>{section.paragraphs[language].map((paragraph, idx) => <p key={idx}>{paragraph}</p>)}{section.list ? <ul>{section.list[language].map(item => <li key={item}>{item}</li>)}</ul> : null}</div></article>)}</section>
     <section className="about"><p className="eyebrow">{t.about}</p><h2>{t.aboutText}</h2><a href={`https://wa.me/${WHATSAPP_PHONE}`}>{connectLabel} →</a></section>
+    <section className="reviews review-showcase">
+      <p className="eyebrow">{language === 'kn' ? 'ಗ್ರಾಹಕ ಪ್ರತಿಕ್ರಿಯೆಗಳು' : language === 'te' ? 'సమీక్షలు' : 'Reviews'}</p>
+      <h2>{language === 'kn' ? 'ನಮ್ಮ ಭಕ್ತರ ಅನುಭವಗಳು' : language === 'te' ? 'మా భక్తుల అనుభవాలు' : 'Experiences shared by devotees'}</h2>
+      <div className="review-list review-list-showcase">{reviews.length === 0 ? <p className="review-empty">{language === 'kn' ? 'ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆಗಳಿಲ್ಲ. ನಿಮ್ಮ ಅನುಭವವನ್ನು ಮೊದಲನೆಯದಾಗಿ ಹಂಚಿಕೊಳ್ಳಿ.' : language === 'te' ? 'ఇంకా సమీక్షలు లేవు. మీ అనుభవాన్ని మొదటిగా పంచుకోండి.' : 'No reviews yet. Be the first to share your experience.'}</p> : reviews.map(review => <article key={review.id} className="review-card"><div className="review-header"><strong>{review.name}</strong><span className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></div><p>{review.text}</p><time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(language === 'kn' ? 'kn-IN' : language === 'te' ? 'te-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</time></article>)}</div>
+    </section>
+    <section className="reviews review-form-section">
+      <p className="eyebrow">{language === 'kn' ? 'ನಿಮ್ಮ ಅನುಭವ' : language === 'te' ? 'మీ అనుభవం' : 'Your experience'}</p>
+      <h2>{language === 'kn' ? 'ನಿಮ್ಮ ಅಭಿಪ್ರಾಯವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ' : language === 'te' ? 'మీ అభిప్రాయము పంచుకోండి' : 'Share your review'}</h2>
+      <form className="review-form" onSubmit={submitReview}>
+          <label className="review-field"><span>{language === 'kn' ? 'ಹೆಸರು' : language === 'te' ? 'పేరు' : 'Name'}</span><input value={reviewName} onChange={event => setReviewName(event.target.value)} maxLength={80} autoComplete="name" required /></label>
+          <fieldset className="review-rating"><legend>{language === 'kn' ? 'ರೇಟಿಂಗ್' : language === 'te' ? 'రేటింగ్' : 'Rating'}</legend><div>{[1, 2, 3, 4, 5].map(value => <button type="button" className={value <= reviewRating ? 'selected' : ''} key={value} onClick={() => setReviewRating(value)} aria-label={`${value} out of 5 stars`} aria-pressed={value === reviewRating}>★</button>)}</div></fieldset>
+          <label className="review-field"><span>{language === 'kn' ? 'ರಿವ್ಯೂ' : language === 'te' ? 'సమీక్ష' : 'Review'}</span><textarea value={reviewText} onChange={event => setReviewText(event.target.value)} rows={5} maxLength={1000} required /></label>
+          <input className="review-honeypot" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+          <button type="submit" disabled={reviewStatus === 'submitting'}>{reviewStatus === 'submitting' ? (language === 'kn' ? 'ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...' : language === 'te' ? 'పంపుతోంది...' : 'Sending…') : (language === 'kn' ? 'ವಿಮರ್ಶೆ ಕಳುಹಿಸಿ' : language === 'te' ? 'సమీక్ష పంపండి' : 'Submit review')}</button>
+          <p className={`review-feedback ${reviewStatus}`} aria-live="polite">{reviewStatus === 'success' ? (language === 'kn' ? 'ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮ ವಿಮರ್ಶೆ ಈಗ ಕಾಣಿಸುತ್ತದೆ.' : language === 'te' ? 'ధన్యవాదాలు. మీ సమీక్ష ఇప్పుడు కనిపిస్తుంది.' : 'Thank you. Your review is now visible.') : reviewStatus === 'error' ? (language === 'kn' ? 'ವಿಮರ್ಶೆ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.' : language === 'te' ? 'సమీక్ష పంపలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి.' : 'We could not load or submit reviews. Please try again.') : null}</p>
+      </form>
+    </section>
     <footer>© {new Date().getFullYear()} Gokarna Purohitha · <a href={`tel:+${CALL_PHONE}`}>+91 86607 51425</a></footer><a className="whatsapp" href={`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent('Namaskara, I would like to enquire about a Pooja in Gokarna.')}`} aria-label="WhatsApp"><WhatsAppIcon /></a>{!bookingOpen ? <div className="mobile-actions"><a href={`tel:+${CALL_PHONE}`}>☎ &nbsp; {t.call}</a><a href={`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent('Namaskara, I would like to enquire about a Pooja in Gokarna.')}`}><WhatsAppIcon /> {connectLabel}</a></div> : null}
     {bookingOpen ? <div className="booking-overlay" role="dialog" aria-modal="true" aria-label={t.enquiry} onClick={() => setBookingOpen(false)}><section className="booking-modal" onClick={event => event.stopPropagation()}><button className="back" onClick={() => setBookingOpen(false)} aria-label="Back">←</button><p className="eyebrow">POOJA ENQUIRY</p><h2>{t.enquiry}</h2><p>{t.formNote}</p><form onSubmit={submit}><label>{t.name}<input name="name" required autoComplete="name" /></label><label>{t.mobile}<input name="mobile" type="tel" required autoComplete="tel" /></label><label>{t.place}<input name="place" required autoComplete="street-address" /></label><label>{t.select}<select name="pooja" required value={selected} onChange={e => setSelected(e.target.value)}><option value="">{t.select}</option>{services.map(s => <option value={serviceName(s)} key={s.id}>{serviceName(s)}</option>)}</select></label><label>{t.date}<input name="date" type="date" /></label><label>{t.devotees}<input name="devotees" type="number" min="1" /></label><label className="wide">{t.notes}<textarea name="notes" rows={3} /></label><div className="modal-actions"><button className="whatsapp-action" type="submit">{connectLabel}</button><button className="book-action" type="button" onClick={() => setComingSoon(true)}>{bookNowLabel}</button></div>{comingSoon ? <p className="coming-soon">{language === 'kn' ? 'ಆನ್‌ಲೈನ್ ಕಾಯ್ದಿರಿಸುವಿಕೆ ಶೀಘ್ರದಲ್ಲೇ ಲಭ್ಯವಾಗಲಿದೆ.' : language === 'te' ? 'ఆన్‌లైన్ బుకింగ్ త్వరలో అందుబాటులో ఉంటుంది.' : 'Online booking is coming soon.'}</p> : null}</form></section></div> : null}
   </main>;
