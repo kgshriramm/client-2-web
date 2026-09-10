@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { poojaCopy, poojaNames, poojas, type PoojaLanguage } from '../data';
+import { poojaCopy, poojaDetails, poojaNames, poojaPurposes, poojas, type PoojaLanguage } from '../data';
 
 export function generateStaticParams() { return poojas.map(([slug]) => ({ slug })); }
 
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const title = `${pooja[1]} in Gokarna`;
-  const description = `Book ${pooja[1]} in Gokarna with a trusted Vedic Purohita. Enquire for traditional procedure, preparation, date and availability.`;
+  const description = `Learn about ${pooja[1]} in Gokarna, including its traditional observance and preparation. Enquire with a Vedic Purohita for availability.`;
   const canonicalUrl = `https://www.gokarnapurohita.com/poojas/${slug}`;
 
   return {
@@ -62,6 +62,8 @@ export default async function PoojaDetail({ params, searchParams }: { params: Pr
   const copy = poojaCopy[language];
   const [, , image] = pooja;
   const name = poojaNames[language][slug];
+  const details = poojaDetails[language][slug];
+  const purposes = poojaPurposes[language][slug];
   const whatsappMessage = language === 'kn' ? `ನಮಸ್ಕಾರ, ${name} ಪೂಜೆಯ ಬಗ್ಗೆ ವಿಚಾರಿಸಬೇಕು.` : language === 'te' ? `నమస్కారం, ${name} పూజ గురించి విచారించాలనుకుంటున్నాను.` : `Namaskara, I would like to enquire about ${name}.`;
 
   return <main className="pooja-detail">
@@ -74,9 +76,14 @@ export default async function PoojaDetail({ params, searchParams }: { params: Pr
       <div><p>{copy.label}</p><h1>{name}</h1></div>
     </div>
     <article>
-      <h2>{copy.enquiry}</h2>
-      <p>{copy.detail}</p>
-      <p style={{ marginTop: '0.75rem' }}>{language === 'kn' ? 'ಈ ಪೂಜೆಗೆ ಗೋಕರ್ಣ ಪೂಜೆ, ಗೋಕರ್ಣ ಪಿತೃ ದೋಷ ಪೂಜೆ ಬೆಲೆ, ನಾರಾಯಣ ಬಲಿ ಪೂಜೆ ಗೋಕರ್ಣ, ಪಂಡಿತ್ ಜೀ Näheಮೀ, ಆನ್ಲೈನ್ ಪೂಜಾ ಬುಕಿಂಗ್ ಮತ್ತು ಮನೆಪೂಜೆ haqida ಸಂಬಂಧಿಸಿದ ವಿವರಗಳನ್ನು ಇಲ್ಲಿ проверಿಸಬಹುದು.' : language === 'te' ? 'ఈ పూజ కోసం గోకర్ణ పూజ, గోకర్ణ పితృ దోష పూజ ధర, నారాయణ బలి పూజ గోకర్ణ, పండిత్ జీ నెర్ మీ, ఆన్లైన్ పూజా బుకింగ్ మరియు హోమ్ పూజ వివరాలు ఇక్కడ చూడవచ్చు.' : 'This service page is aligned with searches such as Gokarna pooja, Gokarna pitru dosha pooja cost, Narayana Bali pooja in Gokarna, pandit ji near me, online pooja booking, and pooja at home.'}</p>
+      <h2>{copy.overview}</h2>
+      <p>{details.overview}</p>
+      <h3>{copy.tradition}</h3>
+      <p>{details.tradition}</p>
+      <h3>{copy.preparation}</h3>
+      <p>{details.preparation}</p>
+      <h3>{copy.purpose}</h3>
+      <ul>{purposes.map((purpose) => <li key={purpose}>{purpose}</li>)}</ul>
       <a href={`https://wa.me/919743029249?text=${encodeURIComponent(whatsappMessage)}`}>{copy.whatsapp} →</a>
     </article>
     <div className="page-actions">
