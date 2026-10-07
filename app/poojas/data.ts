@@ -1,4 +1,5 @@
 export const poojas = [
+  ['rudrabhisheka', 'Rudrabhisheka', '/pooja-images/rudra.jpg'],
   ['pitru-dosha', 'Pitru Dosha Nivarane', '/pooja-images/pitru-dosha.webp'],
   ['narayana-bali', 'Narayana Bali', '/pooja-images/narayana-bali.jpg'],
   ['tripindi', 'Tripindi Shraddha Kriya Karma', '/pooja-images/tripindi.jpg'],
@@ -10,16 +11,31 @@ export const poojas = [
   ['shata-rudra', 'Shata Rudra', '/pooja-images/rudra.jpg'],
 ] as const;
 
+export const seoSlugs: Record<string, string> = {
+  rudrabhisheka: 'rudrabhisheka-gokarna',
+  'narayana-bali': 'narayana-bali-gokarna',
+  'pitru-dosha': 'pitru-dosha-pooja-gokarna',
+  'sarpa-samskara': 'sarpa-samskara-gokarna',
+  navagraha: 'navagraha-shanti-gokarna',
+};
+
+export const canonicalPoojaSlug = (slug: string) =>
+  Object.entries(seoSlugs).find(([, seoSlug]) => seoSlug === slug)?.[0] ?? slug;
+
+export const poojaHref = (slug: string, language?: string) =>
+  `/poojas/${seoSlugs[slug] ?? slug}${language ? `?lang=${language}` : ''}`;
+
 export type PoojaLanguage = 'kn' | 'en' | 'te';
 export const poojaNames: Record<PoojaLanguage, Record<string, string>> = {
-  kn: { 'pitru-dosha':'ಪಿತೃ ದೋಷ ನಿವಾರಣೆ','narayana-bali':'ನಾರಾಯಣ ಬಲಿ',tripindi:'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ ಕ್ರಿಯಾ ಕರ್ಮ',navagraha:'ನವಗ್ರಹ ಶಾಂತಿ',mrityunjaya:'ಮೃತ್ಯುಂಜಯ ಶಾಂತಿ','sarpa-samskara':'ಸರ್ಪ ಸಂಸ್ಕಾರ','ashlesha-bali':'ಆಶ್ಲೇಷ ಬಲಿ','ekadasha-rudra':'ಏಕಾದಶ ರುದ್ರ','shata-rudra':'ಶತ ರುದ್ರ' },
+  kn: { rudrabhisheka:'ರುದ್ರಾಭಿಷೇಕ','pitru-dosha':'ಪಿತೃ ದೋಷ ನಿವಾರಣೆ','narayana-bali':'ನಾರಾಯಣ ಬಲಿ',tripindi:'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ ಕ್ರಿಯಾ ಕರ್ಮ',navagraha:'ನವಗ್ರಹ ಶಾಂತಿ',mrityunjaya:'ಮೃತ್ಯುಂಜಯ ಶಾಂತಿ','sarpa-samskara':'ಸರ್ಪ ಸಂಸ್ಕಾರ','ashlesha-bali':'ಆಶ್ಲೇಷ ಬಲಿ','ekadasha-rudra':'ಏಕಾದಶ ರುದ್ರ','shata-rudra':'ಶತ ರುದ್ರ' },
   en: Object.fromEntries(poojas.map(([slug,name]) => [slug,name])),
-  te: { 'pitru-dosha':'పితృ దోష నివారణ','narayana-bali':'నారాయణ బలి',tripindi:'త్రిపిండి శ్రాద్ధ క్రియా కర్మ',navagraha:'నవగ్రహ శాంతి',mrityunjaya:'మృత్యుంజయ శాంతి','sarpa-samskara':'సర్ప సంస్కార','ashlesha-bali':'ఆశ్లేష బలి','ekadasha-rudra':'ఏకాదశ రుద్ర','shata-rudra':'శత రుద్ర' },
+  te: { rudrabhisheka:'రుద్రాభిషేకం','pitru-dosha':'పితృ దోష నివారణ','narayana-bali':'నారాయణ బలి',tripindi:'త్రిపిండి శ్రాద్ధ క్రియా కర్మ',navagraha:'నవగ్రహ శాంతి',mrityunjaya:'మృత్యుంజయ శాంతి','sarpa-samskara':'సర్ప సంస్కార','ashlesha-bali':'ఆశ్లేష బలి','ekadasha-rudra':'ఏకాదశ రుద్ర','shata-rudra':'శత రుద్ర' },
 };
 
 type Detail = { overview: string; tradition: string; preparation: string };
 export const poojaDetails: Record<PoojaLanguage, Record<string, Detail>> = {
   en: {
+    rudrabhisheka: { overview: 'Rudrabhisheka is a traditional Shiva worship in which abhisheka is offered with Vedic prayers to Lord Rudra.', tradition: 'The recitation, offerings and form of abhisheka are arranged according to the Purohita’s procedure, the venue and the family’s tradition.', preparation: 'Share your preferred date, location and number of devotees. The Purohita will confirm the suitable format and preparation details.' },
     'pitru-dosha': { overview: 'A family-led ancestral remembrance rite, traditionally performed with sankalpa, tarpana and offerings as advised by the priest.', tradition: 'It is commonly requested around annual remembrance days, Amavasya, or a family pilgrimage. The exact observance differs by family tradition.', preparation: 'Please share the names, gotra and relevant tithi, if known. The Purohita will confirm the suitable form, materials and timing.' },
     'narayana-bali': { overview: 'Narayana Bali is a traditional rite in which prayers and offerings are made to Lord Narayana in connection with ancestral remembrance.', tradition: 'Customs, eligibility and sequence vary by sampradaya and regional practice. It is planned only after a personal consultation with the Purohita.', preparation: 'Please contact us before fixing travel or a date. The Purohita will advise on the family details, tithi and materials required.' },
     tripindi: { overview: 'Tripindi Shraddha is an ancestral rite in which three pindas are offered as part of a formal Shraddha observance.', tradition: 'It is performed according to family lineage and local Vedic custom, often alongside other ancestral observances when appropriate.', preparation: 'Share the family gotra and ancestor details available to you. The appropriate day, procedure and offerings will be confirmed personally.' },
@@ -31,6 +47,7 @@ export const poojaDetails: Record<PoojaLanguage, Record<string, Detail>> = {
     'shata-rudra': { overview: 'Shata Rudra is a more elaborate Rudra worship, arranged with repeated Vedic recitation and Shiva abhisheka.', tradition: 'Because arrangements can vary substantially, the precise format is finalised by the Purohita after discussing the family’s intention, venue and available time.', preparation: 'Advance planning is recommended. Contact us for priest availability, required materials and a ceremony plan suited to your occasion.' },
   },
   kn: {
+    rudrabhisheka: { overview: 'ರುದ್ರಾಭಿಷೇಕವು ರುದ್ರನಿಗೆ ವೈದಿಕ ಪ್ರಾರ್ಥನೆಗಳೊಂದಿಗೆ ಅಭಿಷೇಕ ಅರ್ಪಿಸುವ ಸಾಂಪ್ರದಾಯಿಕ ಶಿವಾರಾಧನೆಯಾಗಿದೆ.', tradition: 'ಪಠಣ, ಅರ್ಪಣೆ ಮತ್ತು ಅಭಿಷೇಕದ ವಿಧಾನವನ್ನು ಪುರೋಹಿತರ ಪದ್ಧತಿ, ಸ್ಥಳ ಮತ್ತು ಕುಟುಂಬದ ಸಂಪ್ರದಾಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಆಯೋಜಿಸಲಾಗುತ್ತದೆ.', preparation: 'ನಿಮ್ಮ ಆದ್ಯತೆಯ ದಿನಾಂಕ, ಸ್ಥಳ ಮತ್ತು ಭಕ್ತರ ಸಂಖ್ಯೆಯನ್ನು ತಿಳಿಸಿ. ಸೂಕ್ತ ವಿಧಾನ ಮತ್ತು ಸಿದ್ಧತೆಯನ್ನು ಪುರೋಹಿತರು ದೃಢೀಕರಿಸುತ್ತಾರೆ.' },
     'pitru-dosha': { overview: 'ಇದು ಕುಟುಂಬದ ಪೂರ್ವಜರ ಸ್ಮರಣಾರ್ಥ ಸಂಕಲ್ಪ, ತರ್ಪಣ ಮತ್ತು ಅರ್ಪಣೆಗಳೊಂದಿಗೆ ಪುರೋಹಿತರ ಮಾರ್ಗದರ್ಶನದಲ್ಲಿ ನೆರವೇರಿಸುವ ವಿಧಿಯಾಗಿದೆ.', tradition: 'ಇದನ್ನು ಸಾಮಾನ್ಯವಾಗಿ ವಾರ್ಷಿಕ ಸ್ಮರಣಾ ದಿನ, ಅಮಾವಾಸ್ಯೆ ಅಥವಾ ತೀರ್ಥಯಾತ್ರೆಯ ಸಂದರ್ಭದಲ್ಲಿ ಮಾಡಲಾಗುತ್ತದೆ. ಕುಟುಂಬದ ಸಂಪ್ರದಾಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ವಿಧಾನ ಬದಲಾಗಬಹುದು.', preparation: 'ಗೋತ್ರ, ತಿಳಿದಿರುವ ತಿಥಿ ಮತ್ತು ಪೂರ್ವಜರ ಹೆಸರುಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ. ಸೂಕ್ತ ವಿಧಾನ, ಸಾಮಗ್ರಿ ಮತ್ತು ಸಮಯವನ್ನು ಪುರೋಹಿತರು ತಿಳಿಸುತ್ತಾರೆ.' },
     'narayana-bali': { overview: 'ನಾರಾಯಣ ಬಲಿಯು ಪೂರ್ವಜರ ಸ್ಮರಣೆಯ ಅಂಗವಾಗಿ ಶ್ರೀನಾರಾಯಣನಿಗೆ ಪ್ರಾರ್ಥನೆ ಮತ್ತು ಅರ್ಪಣೆ ಮಾಡುವ ಸಾಂಪ್ರದಾಯಿಕ ವಿಧಿಯಾಗಿದೆ.', tradition: 'ಸಂಪ್ರದಾಯ, ಅರ್ಹತೆ ಮತ್ತು ಕ್ರಮವು ಕುಟುಂಬದ ಹಾಗೂ ಪ್ರಾದೇಶಿಕ ಪದ್ಧತಿಗಳ ಪ್ರಕಾರ ಬದಲಾಗುತ್ತದೆ. ಪುರೋಹಿತರ ವೈಯಕ್ತಿಕ ಸಲಹೆಯ ನಂತರವೇ ಯೋಜಿಸಲಾಗುತ್ತದೆ.', preparation: 'ಪ್ರಯಾಣ ಅಥವಾ ದಿನಾಂಕ ನಿಗದಿಪಡಿಸುವ ಮೊದಲು ಸಂಪರ್ಕಿಸಿ. ಕುಟುಂಬದ ವಿವರ, ತಿಥಿ ಮತ್ತು ಅಗತ್ಯ ಸಾಮಗ್ರಿಗಳ ಬಗ್ಗೆ ಪುರೋಹಿತರು ತಿಳಿಸುತ್ತಾರೆ.' },
     tripindi: { overview: 'ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧವು ಔಪಚಾರಿಕ ಶ್ರಾದ್ಧದ ಅಂಗವಾಗಿ ಮೂರು ಪಿಂಡಗಳನ್ನು ಅರ್ಪಿಸುವ ಪಿತೃಕಾರ್ಯವಾಗಿದೆ.', tradition: 'ಇದು ಕುಟುಂಬದ ಗೋತ್ರ ಮತ್ತು ಸ್ಥಳೀಯ ವೈದಿಕ ಸಂಪ್ರದಾಯದಂತೆ ನಡೆಯುತ್ತದೆ; ಅಗತ್ಯವಿದ್ದಲ್ಲಿ ಇತರ ಪಿತೃಕಾರ್ಯಗಳ ಜೊತೆಗೆ ನೆರವೇರಿಸಬಹುದು.', preparation: 'ನಿಮಗೆ ತಿಳಿದಿರುವ ಗೋತ್ರ ಮತ್ತು ಪೂರ್ವಜರ ವಿವರಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಿ. ಸೂಕ್ತ ದಿನ, ವಿಧಾನ ಮತ್ತು ಅರ್ಪಣೆಗಳನ್ನು ವೈಯಕ್ತಿಕವಾಗಿ ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ.' },
@@ -42,6 +59,7 @@ export const poojaDetails: Record<PoojaLanguage, Record<string, Detail>> = {
     'shata-rudra': { overview: 'ಶತ ರುದ್ರವು ಪುನರಾವರ್ತಿತ ವೈದಿಕ ಪಠಣ ಮತ್ತು ಶಿವಾಭಿಷೇಕದೊಂದಿಗೆ ಆಯೋಜಿಸುವ ಹೆಚ್ಚು ವಿಸ್ತೃತ ರುದ್ರಾರಾಧನೆಯಾಗಿದೆ.', tradition: 'ವ್ಯವಸ್ಥೆಗಳು ಬಹಳ ಬದಲಾಗಬಹುದಾದ ಕಾರಣ, ಕುಟುಂಬದ ಉದ್ದೇಶ, ಸ್ಥಳ ಮತ್ತು ಸಮಯವನ್ನು ಚರ್ಚಿಸಿದ ನಂತರವೇ ನಿಖರ ವಿಧಾನವನ್ನು ಪುರೋಹಿತರು ಅಂತಿಮಗೊಳಿಸುತ್ತಾರೆ.', preparation: 'ಮುಂಚಿತ ಯೋಜನೆ ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಪುರೋಹಿತರ ಲಭ್ಯತೆ, ಸಾಮಗ್ರಿ ಮತ್ತು ಸಮಾರಂಭದ ಯೋಜನೆಗಾಗಿ ಸಂಪರ್ಕಿಸಿ.' },
   },
   te: {
+    rudrabhisheka: { overview: 'రుద్రాభిషేకం అనేది రుద్రునికి వైదిక ప్రార్థనలతో అభిషేకం సమర్పించే సాంప్రదాయ శివారాధన.', tradition: 'పారాయణం, సమర్పణలు, అభిషేక విధానాన్ని పురోహితుని పద్ధతి, ప్రదేశం, కుటుంబ సంప్రదాయం ప్రకారం ఏర్పాటు చేస్తారు.', preparation: 'మీ ఇష్టమైన తేదీ, ప్రదేశం, భక్తుల సంఖ్యను తెలియజేయండి. సరైన విధానం, సిద్ధతను పురోహితుడు నిర్ధారిస్తారు.' },
     'pitru-dosha': { overview: 'ఇది కుటుంబ పితృస్మరణ కోసం సంకల్పం, తర్పణం మరియు సమర్పణలతో పురోహితుని మార్గదర్శకత్వంలో నిర్వహించే కర్మ.', tradition: 'సాధారణంగా వార్షిక స్మరణ దినం, అమావాస్య లేదా తీర్థయాత్ర సమయంలో చేస్తారు. కుటుంబ సంప్రదాయం ప్రకారం విధానం మారవచ్చు.', preparation: 'గోత్రం, తెలిసిన తిథి మరియు పితృదేవతల పేర్లను పంచుకోండి. సరైన విధానం, సామగ్రి మరియు సమయాన్ని పురోహితుడు నిర్ధారిస్తారు.' },
     'narayana-bali': { overview: 'నారాయణ బలి అనేది పితృస్మరణ సందర్భంలో శ్రీనారాయణునికి ప్రార్థనలు, సమర్పణలు చేసే సాంప్రదాయ కర్మ.', tradition: 'సంప్రదాయం, అర్హత మరియు క్రమం కుటుంబ, ప్రాంతీయ పద్ధతులను బట్టి మారుతాయి. పురోహితుని వ్యక్తిగత సంప్రదింపు తరువాతే ప్రణాళిక చేస్తారు.', preparation: 'ప్రయాణం లేదా తేదీ ఖరారు చేయకముందు సంప్రదించండి. కుటుంబ వివరాలు, తిథి, అవసరమైన సామగ్రి గురించి పురోహితుడు సూచిస్తారు.' },
     tripindi: { overview: 'త్రిపిండి శ్రాద్ధం అనేది అధికారిక శ్రాద్ధంలో భాగంగా మూడు పిండాలను సమర్పించే పితృకర్మ.', tradition: 'ఇది కుటుంబ గోత్రం, స్థానిక వైదిక ఆచారం ప్రకారం నిర్వహిస్తారు; అవసరమైతే ఇతర పితృకర్మలతో కలిపి చేయవచ్చు.', preparation: 'మీకు తెలిసిన గోత్రం, పితృదేవతల వివరాలు పంచుకోండి. తగిన రోజు, విధానం, సమర్పణలను వ్యక్తిగతంగా నిర్ధారిస్తారు.' },
@@ -56,6 +74,7 @@ export const poojaDetails: Record<PoojaLanguage, Record<string, Detail>> = {
 
 export const poojaPurposes: Record<PoojaLanguage, Record<string, string[]>> = {
   en: {
+    rudrabhisheka: ['Worship of Lord Shiva', 'Family prayers and peace', 'Auspicious occasions', 'Seeking the blessings of Lord Rudra'],
     'pitru-dosha': ['Traditional ancestral prayers', 'Honouring departed ancestors', 'Family-prescribed Pitru Karya', 'Addressing missed ancestral observances'],
     'narayana-bali': ['A prescribed ancestral observance', 'Traditional concerns following an untimely death', 'Incomplete or disturbed final rites', 'Prayers for the departed'],
     tripindi: ['Honouring departed ancestors', 'Long-standing gaps in annual Shraddha', 'Traditional Pitru Karya', 'Pinda and Tarpana offerings'],
@@ -67,6 +86,7 @@ export const poojaPurposes: Record<PoojaLanguage, Record<string, string[]>> = {
     'shata-rudra': ['Elaborate worship of Lord Shiva', 'Family prayers and spiritual wellbeing', 'Special religious occasions', 'Deepening devotional connection with Rudra'],
   },
   kn: {
+    rudrabhisheka: ['ಶ್ರೀ ಶಿವನ ಆರಾಧನೆಗಾಗಿ', 'ಕುಟುಂಬದ ಪ್ರಾರ್ಥನೆ ಮತ್ತು ಶಾಂತಿಗಾಗಿ', 'ಶುಭ ಸಂದರ್ಭಗಳಿಗಾಗಿ', 'ಶ್ರೀ ರುದ್ರನ ಆಶೀರ್ವಾದಕ್ಕಾಗಿ'],
     'pitru-dosha': ['ಸಾಂಪ್ರದಾಯಿಕ ಪಿತೃ ಪ್ರಾರ್ಥನೆಗಳು', 'ಮೃತ ಪಿತೃಗಳನ್ನು ಗೌರವಿಸಲು', 'ಕುಟುಂಬ ಸಂಪ್ರದಾಯದ ಪಿತೃಕಾರ್ಯ', 'ಬಾಕಿಯಿರುವ ಪಿತೃ ಆಚರಣೆಗಳಿಗಾಗಿ'],
     'narayana-bali': ['ನಿಗದಿತ ಪಿತೃ ಸಂಬಂಧಿತ ಆಚರಣೆ', 'ಅಕಾಲಿಕ ಮರಣದ ಹಿನ್ನೆಲೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಸಂದರ್ಭಗಳು', 'ಅಪೂರ್ಣ ಅಂತ್ಯಕ್ರಿಯೆಗಳ ಸಂದರ್ಭಗಳು', 'ಮೃತರ ಸ್ಮರಣೆಯ ಪ್ರಾರ್ಥನೆಗಳು'],
     tripindi: ['ಮೃತ ಪಿತೃಗಳನ್ನು ಗೌರವಿಸಲು', 'ಬಾಕಿಯಿರುವ ವಾರ್ಷಿಕ ಶ್ರಾದ್ಧಕ್ಕಾಗಿ', 'ಸಾಂಪ್ರದಾಯಿಕ ಪಿತೃಕಾರ್ಯಕ್ಕಾಗಿ', 'ಪಿಂಡ ಮತ್ತು ತರ್ಪಣ ಅರ್ಪಣೆಗಾಗಿ'],
@@ -78,6 +98,7 @@ export const poojaPurposes: Record<PoojaLanguage, Record<string, string[]>> = {
     'shata-rudra': ['ವಿಸ್ತೃತ ಶಿವಾರಾಧನೆಗಾಗಿ', 'ಕುಟುಂಬದ ಪ್ರಾರ್ಥನೆ ಮತ್ತು ಆಧ್ಯಾತ್ಮಿಕ ಕ್ಷೇಮಕ್ಕಾಗಿ', 'ವಿಶೇಷ ಧಾರ್ಮಿಕ ಸಂದರ್ಭಗಳಿಗಾಗಿ', 'ರುದ್ರನ ಭಕ್ತಿಯನ್ನು ಗಾಢಗೊಳಿಸಲು'],
   },
   te: {
+    rudrabhisheka: ['శివుని ఆరాధన కోసం', 'కుటుంబ ప్రార్థనలు, శాంతి కోసం', 'శుభ సందర్భాల కోసం', 'శ్రీ రుద్రుని ఆశీర్వాదం కోసం'],
     'pitru-dosha': ['సాంప్రదాయ పితృ ప్రార్థనలు', 'మరణించిన పితృదేవతలను గౌరవించడానికి', 'కుటుంబ సంప్రదాయం ప్రకారం పితృకార్యాలు', 'జరగని పితృ ఆచారాల కోసం'],
     'narayana-bali': ['నిర్దేశిత పితృ సంబంధిత కర్మ', 'అకాల మరణానికి సంబంధించిన సాంప్రదాయ సందర్భాలు', 'అసంపూర్ణ అంత్యక్రియల సందర్భాలు', 'మరణించిన వారి కోసం ప్రార్థనలు'],
     tripindi: ['పితృదేవతలను గౌరవించడానికి', 'చాలా కాలంగా జరగని వార్షిక శ్రాద్ధం కోసం', 'సాంప్రదాయ పితృకార్యాల కోసం', 'పిండం, తర్పణ సమర్పణల కోసం'],
@@ -94,6 +115,28 @@ export const poojaGuidance: Record<PoojaLanguage, { heading: string; body: strin
   en: { heading: 'Which Pooja is right for you?', body: 'Choosing a Pooja in Gokarna depends on the purpose of the visit and the family’s religious tradition. Pitru Dosha Nivarana, Narayana Bali and Tripindi Shraddha are not interchangeable rituals; Sarpa Samskara and Ashlesha Bali also have distinct traditional procedures. Before booking, discuss your family circumstances, previous observances and relevant dates with the Purohita so that the appropriate vidhi, participants, duration and preparation can be confirmed.' },
   kn: { heading: 'ನಿಮಗೆ ಸೂಕ್ತವಾದ ಪೂಜೆ ಯಾವುದು?', body: 'ಗೋಕರ್ಣದಲ್ಲಿ ಯಾವ ಪೂಜೆ ಮಾಡಬೇಕು ಎಂಬುದು ಭೇಟಿಯ ಉದ್ದೇಶ ಮತ್ತು ಕುಟುಂಬದ ಧಾರ್ಮಿಕ ಸಂಪ್ರದಾಯವನ್ನು ಅವಲಂಬಿಸಿರುತ್ತದೆ. ಪಿತೃ ದೋಷ ನಿವಾರಣೆ, ನಾರಾಯಣ ಬಲಿ ಮತ್ತು ತ್ರಿಪಿಂಡಿ ಶ್ರಾದ್ಧ ಒಂದೇ ಪೂಜೆಗಳಲ್ಲ; ಸರ್ಪ ಸಂಸ್ಕಾರ ಮತ್ತು ಆಶ್ಲೇಷಾ ಬಲಿಗೂ ವಿಭಿನ್ನ ವೈದಿಕ ವಿಧಾನಗಳಿವೆ. ಬುಕ್ಕಿಂಗ್ ಮಾಡುವ ಮೊದಲು ಕುಟುಂಬದ ಪರಿಸ್ಥಿತಿ, ಹಿಂದಿನ ಆಚರಣೆಗಳು ಮತ್ತು ಸಂಬಂಧಿತ ತಿಥಿಗಳ ಬಗ್ಗೆ ಪುರೋಹಿತರೊಂದಿಗೆ ಚರ್ಚಿಸಿ; ಆಗ ಸೂಕ್ತ ವಿಧಿ, ಭಾಗವಹಿಸುವವರು, ಅವಧಿ ಮತ್ತು ಸಿದ್ಧತೆಯನ್ನು ದೃಢೀಕರಿಸಬಹುದು.' },
   te: { heading: 'మీకు సరైన పూజ ఏది?', body: 'గోకర్ణంలో ఏ పూజ చేయాలనేది సందర్శన ఉద్దేశ్యం, కుటుంబ ధార్మిక సంప్రదాయంపై ఆధారపడి ఉంటుంది. పితృ దోష నివారణ, నారాయణ బలి, త్రిపిండి శ్రాద్ధం ఒకే కర్మలు కావు; సర్ప సంస్కారం, ఆశ్లేష బలికి కూడా వేర్వేరు వైదిక విధానాలు ఉన్నాయి. బుకింగ్‌కు ముందు కుటుంబ పరిస్థితులు, గత ఆచారాలు, సంబంధిత తేదీల గురించి పురోహితునితో చర్చించండి. అప్పుడు తగిన విధి, పాల్గొనేవారు, వ్యవధి, సిద్ధతను నిర్ధారించవచ్చు.' },
+};
+
+type Faq = { question: string; answer: string };
+export const poojaFaqs: Record<PoojaLanguage, Record<string, Faq[]>> = {
+  en: Object.fromEntries(poojas.map(([slug, name]) => [slug, [
+    { question: `How can I enquire about ${name} in Gokarna?`, answer: `Use the WhatsApp or call option on this page. Please share your preferred date, location and family details relevant to the observance.` },
+    { question: 'How are dates and requirements confirmed?', answer: 'The Purohita confirms availability, the suitable observance, required participants and preparations after understanding your family tradition and circumstances.' },
+    { question: 'Where is the ritual conducted?', answer: 'The location is confirmed during the enquiry based on the service, date and family requirements.' },
+    { question: 'Is the cost shown online?', answer: 'Please contact the Purohita for the current contribution and any requirements. It depends on the confirmed observance and arrangements.' },
+  ]])) as Record<string, Faq[]>,
+  kn: Object.fromEntries(poojas.map(([slug, name]) => [slug, [
+    { question: `${poojaNames.kn[slug]} ಪೂಜೆಯ ಬಗ್ಗೆ ಗೋಕರ್ಣದಲ್ಲಿ ಹೇಗೆ ವಿಚಾರಿಸಬಹುದು?`, answer: 'ಈ ಪುಟದಲ್ಲಿರುವ ವಾಟ್ಸಾಪ್ ಅಥವಾ ಕರೆ ಆಯ್ಕೆಯನ್ನು ಬಳಸಿ. ನಿಮ್ಮ ಆದ್ಯತೆಯ ದಿನಾಂಕ, ಸ್ಥಳ ಮತ್ತು ಸಂಬಂಧಿತ ಕುಟುಂಬದ ವಿವರಗಳನ್ನು ತಿಳಿಸಿ.' },
+    { question: 'ದಿನಾಂಕ ಮತ್ತು ಅಗತ್ಯಗಳನ್ನು ಹೇಗೆ ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ?', answer: 'ಕುಟುಂಬದ ಸಂಪ್ರದಾಯ ಮತ್ತು ಪರಿಸ್ಥಿತಿಯನ್ನು ತಿಳಿದ ನಂತರ ಪುರೋಹಿತರು ಲಭ್ಯತೆ, ಸೂಕ್ತ ವಿಧಿ, ಭಾಗವಹಿಸುವವರು ಮತ್ತು ಸಿದ್ಧತೆಯನ್ನು ದೃಢೀಕರಿಸುತ್ತಾರೆ.' },
+    { question: 'ಪೂಜೆಯನ್ನು ಎಲ್ಲಿ ನಡೆಸಲಾಗುತ್ತದೆ?', answer: 'ಸೇವೆ, ದಿನಾಂಕ ಮತ್ತು ಕುಟುಂಬದ ಅಗತ್ಯತೆಗಳ ಆಧಾರದ ಮೇಲೆ ವಿಚಾರಣೆಯ ಸಮಯದಲ್ಲಿ ಸ್ಥಳವನ್ನು ದೃಢೀಕರಿಸಲಾಗುತ್ತದೆ.' },
+    { question: 'ವೆಚ್ಚವನ್ನು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ತೋರಿಸಲಾಗಿದೆಯೇ?', answer: 'ಪ್ರಸ್ತುತ ಕಾಣಿಕೆ ಮತ್ತು ಅಗತ್ಯಗಳಿಗಾಗಿ ಪುರೋಹಿತರನ್ನು ಸಂಪರ್ಕಿಸಿ. ದೃಢೀಕರಿಸಿದ ವಿಧಿ ಮತ್ತು ವ್ಯವಸ್ಥೆಗಳ ಪ್ರಕಾರ ಅದು ಬದಲಾಗಬಹುದು.' },
+  ]])) as Record<string, Faq[]>,
+  te: Object.fromEntries(poojas.map(([slug]) => [slug, [
+    { question: `${poojaNames.te[slug]} గురించి గోకర్ణంలో ఎలా విచారించాలి?`, answer: 'ఈ పేజీలోని వాట్సాప్ లేదా కాల్ ఎంపికను ఉపయోగించండి. మీకు ఇష్టమైన తేదీ, ప్రదేశం, కుటుంబ వివరాలను పంచుకోండి.' },
+    { question: 'తేదీలు, అవసరాలు ఎలా నిర్ధారిస్తారు?', answer: 'కుటుంబ సంప్రదాయం, పరిస్థితులను తెలుసుకున్న తరువాత పురోహితుడు లభ్యత, సరైన విధి, పాల్గొనేవారు, సిద్ధతను నిర్ధారిస్తారు.' },
+    { question: 'పూజ ఎక్కడ నిర్వహిస్తారు?', answer: 'సేవ, తేదీ, కుటుంబ అవసరాల ప్రకారం విచారణ సమయంలో ప్రదేశాన్ని నిర్ధారిస్తారు.' },
+    { question: 'ఖర్చు ఆన్‌లైన్‌లో చూపించబడుతుందా?', answer: 'ప్రస్తుత వివరాలు, అవసరాల కోసం పురోహితుడిని సంప్రదించండి. నిర్ధారించిన విధి, ఏర్పాట్ల ప్రకారం మారవచ్చు.' },
+  ]])) as Record<string, Faq[]>,
 };
 
 export const poojaCopy = {

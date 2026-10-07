@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { poojaCopy, poojaGuidance, poojaNames, poojas, type PoojaLanguage } from './data';
+import { poojaCopy, poojaDetails, poojaGuidance, poojaHref, poojaNames, poojas, type PoojaLanguage } from './data';
 
 export const metadata: Metadata = {
-  title: 'Poojas in Gokarna',
+  title: 'Pooja Services in Gokarna',
   description: 'Explore traditional Poojas in Gokarna, with clear information on observance and preparation from a local Vedic Purohita.',
   keywords: [
     'Poojas in Gokarna', 'Gokarna Pooja Booking', 'Pooja Booking in Gokarna',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: '/poojas' },
   openGraph: {
-    title: 'Poojas in Gokarna | Gokarna Purohita',
+    title: 'Pooja Services in Gokarna | Gokarna Purohita',
     description: 'Explore traditional Poojas in Gokarna with a local Vedic Purohita.',
     url: 'https://www.gokarnapurohita.com/poojas',
     type: 'website',
@@ -45,14 +45,15 @@ export default async function PoojasPage({ searchParams }: { searchParams: Promi
     </header>
     <section>
       <p className="eyebrow">{copy.label}</p>
-      <h1>{copy.title}</h1>
+      <h1>{language === 'en' ? 'Pooja Services in Gokarna' : copy.title}</h1>
       <p>{copy.intro}</p>
       <div className="pooja-list">
-        {poojas.map(([slug, , image]) => <a href={`/poojas/${slug}?lang=${language}`} key={slug}>
+        {poojas.map(([slug, , image]) => <article key={slug}>
           <div className="pooja-card-image"><img src={image} alt={poojaNames[language][slug]} width="720" height="405" loading="lazy" /></div>
           <h2>{poojaNames[language][slug]}</h2>
-          <span>{copy.read} →</span>
-        </a>)}
+          <p>{poojaDetails[language][slug].overview}</p>
+          <div className="pooja-card-actions"><a href={poojaHref(slug, language)}>{copy.read} →</a><a href={`https://wa.me/919743029249?text=${encodeURIComponent(language === 'en' ? `Namaskara, I would like to enquire about ${poojaNames.en[slug]} in Gokarna. Please share the available dates and details.` : `${poojaNames[language][slug]} ಪೂಜೆಯ ಬಗ್ಗೆ ವಿಚಾರಿಸಬೇಕು.`)}`}>{language === 'en' ? 'Enquire' : copy.whatsapp}</a></div>
+        </article>)}
       </div>
       <aside className="pooja-guidance">
         <h2>{guidance.heading}</h2>
