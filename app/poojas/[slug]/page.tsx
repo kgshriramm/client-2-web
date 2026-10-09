@@ -6,12 +6,12 @@ export function generateStaticParams() { return poojas.map(([slug]) => ({ slug: 
 
 const serviceKeywords: Record<string, string[]> = {
   rudrabhisheka: ['Rudrabhisheka Gokarna', 'Rudrabhisheka in Gokarna', 'Shiva Abhisheka Gokarna', 'Rudra Pooja Gokarna'],
-  'pitru-dosha': ['Pitru Dosha Pooja Gokarna', 'Pitru Dosha Nivarane Gokarna', 'Pitru Karya Gokarna', 'ancestor rituals Gokarna', 'gokarna pitru dosha pooja', 'pitru dosha pooja in gokarna', 'pitru dosha pooja cost in gokarna'],
-  'narayana-bali': ['Narayana Bali Gokarna', 'Narayana Bali Pooja Gokarna', 'Narayan Nagbali Gokarna', 'narayana bali pooja in gokarna', 'narayana bali pooja in gokarna cost'],
+  'pitru-dosha': ['Pitru Dosha Pooja in Gokarna', 'Gokarna Pitru Dosha Pooja', 'Pitru Dosha Pooja cost in Gokarna', 'Pitru Dosha Nivarane Gokarna', 'Pitru Karya Gokarna', 'ancestral rituals Gokarna'],
+  'narayana-bali': ['Narayana Bali Pooja in Gokarna', 'Gokarna Narayana Bali', 'Gokarna Narayan Bali Pooja', 'Moksha Narayana Bali Pooja in Gokarna', 'Narayana Bali Pooja procedure', 'Narayana Bali cost in Gokarna'],
   tripindi: ['Tripindi Shraddha Gokarna', 'Tripindi Shraddha Kriya Gokarna', 'Tripindi Pooja Gokarna', 'gokarna temple pooja details'],
-  navagraha: ['Navagraha Shanti Gokarna', 'Navagraha Pooja Gokarna', 'Graha Shanti Gokarna', 'gokarna temple pooja list'],
+  navagraha: ['Navagraha Shanti Pooja in Gokarna', 'Navagraha Shanti Gokarna', 'Navagraha Pooja Gokarna', 'Graha Shanti Gokarna'],
   mrityunjaya: ['Mrityunjaya Shanti Gokarna', 'Maha Mrityunjaya Pooja Gokarna', 'Mrityunjaya Homa Gokarna', 'gokarna pooja details'],
-  'sarpa-samskara': ['Sarpa Samskara Gokarna', 'Sarpa Dosha Pooja Gokarna', 'Naga Dosha Pooja Gokarna', 'gokarna pooja'],
+  'sarpa-samskara': ['Sarpa Samskara Pooja details', 'Sarpa Samskara in Gokarna', 'Sarpa Samskara Pooja benefits', 'Who can do Sarpa Samskara Pooja', 'Sarpa Dosha Pooja Gokarna'],
   'ashlesha-bali': ['Ashlesha Bali Gokarna', 'Ashlesha Bali Pooja Gokarna', 'Sarpa Dosha Nivarane Gokarna', 'pooja at home'],
   'ekadasha-rudra': ['Ekadasha Rudra Gokarna', 'Ekadasha Rudrabhisheka Gokarna', 'Rudra Pooja Gokarna', 'online pooja booking'],
   'shata-rudra': ['Shata Rudra Gokarna', 'Shata Rudrabhisheka Gokarna', 'Maha Rudra Pooja Gokarna', 'pandit ji near me']
@@ -66,7 +66,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function PoojaDetail({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ lang?: string | string[] }> }) {
   const [{ slug }, { lang }] = await Promise.all([params, searchParams]);
   const canonicalSlug = canonicalPoojaSlug(slug);
-  if (slug !== canonicalSlug && seoSlugs[canonicalSlug]) permanentRedirect(poojaHref(canonicalSlug, typeof lang === 'string' ? lang : undefined));
+  // Redirect only the previous internal URL (for example /poojas/narayana-bali).
+  // The SEO URL already resolves back to its internal service key, so redirecting
+  // it again would send the visitor to the same URL and create a redirect loop.
+  if (slug === canonicalSlug && seoSlugs[canonicalSlug]) permanentRedirect(poojaHref(canonicalSlug, typeof lang === 'string' ? lang : undefined));
   const pooja = poojas.find(([id]) => id === canonicalSlug);
   if (!pooja) notFound();
 
@@ -74,6 +77,7 @@ export default async function PoojaDetail({ params, searchParams }: { params: Pr
   const copy = poojaCopy[language];
   const [, , image] = pooja;
   const name = poojaNames[language][canonicalSlug];
+  const heading = language === 'en' ? seoTitles[canonicalSlug] ?? name : name;
   const details = poojaDetails[language][canonicalSlug];
   const purposes = poojaPurposes[language][canonicalSlug];
   const faqs = poojaFaqs[language][canonicalSlug];
@@ -93,7 +97,7 @@ export default async function PoojaDetail({ params, searchParams }: { params: Pr
     </header>
     <div className="detail-hero">
       <img src={image} alt={`${name} ritual service in Gokarna`} width="720" height="405" />
-      <div><p>{copy.label}</p><h1>{name}</h1><div className="detail-hero-actions"><a href={`tel:+918660751425`}>☎ {language === 'kn' ? 'ಕರೆ ಮಾಡಿ' : language === 'te' ? 'కాల్ చేయండి' : 'Call now'}</a><a href={`https://wa.me/919743029249?text=${encodeURIComponent(whatsappMessage)}`}>{language === 'kn' ? 'ವಾಟ್ಸಾಪ್ ಮಾಡಿ' : language === 'te' ? 'వాట్సాప్ చేయండి' : 'WhatsApp to book'}</a></div></div>
+      <div><p>{copy.label}</p><h1>{heading}</h1><div className="detail-hero-actions"><a href={`tel:+918660751425`}>☎ {language === 'kn' ? 'ಕರೆ ಮಾಡಿ' : language === 'te' ? 'కాల్ చేయండి' : 'Call now'}</a><a href={`https://wa.me/919743029249?text=${encodeURIComponent(whatsappMessage)}`}>{language === 'kn' ? 'ವಾಟ್ಸಾಪ್ ಮಾಡಿ' : language === 'te' ? 'వాట్సాప్ చేయండి' : 'WhatsApp to book'}</a></div></div>
     </div>
     <article>
       <h2>{copy.overview}</h2>
