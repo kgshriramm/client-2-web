@@ -6,6 +6,16 @@ type Language = 'kn' | 'en' | 'te';
 type Service = { id: string; kn: string; en: string; te: string; image: string };
 type Review = { id: string; name: string; rating: number; text: string; created_at: string };
 
+function isReview(value: unknown): value is Review {
+  if (!value || typeof value !== 'object') return false;
+  const review = value as Record<string, unknown>;
+  return typeof review.id === 'string'
+    && typeof review.name === 'string'
+    && typeof review.rating === 'number'
+    && typeof review.text === 'string'
+    && typeof review.created_at === 'string';
+}
+
 const CALL_PHONE = '918660751425';
 const WHATSAPP_PHONE = '919743029249';
 function WhatsAppIcon() { return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3.2A12.7 12.7 0 0 0 5.1 22.2L3.2 28.8l6.8-1.8A12.7 12.7 0 1 0 16 3.2Zm0 22.9a10.3 10.3 0 0 1-5.2-1.4l-.4-.2-4 1.1 1.1-3.9-.2-.4A10.3 10.3 0 1 1 16 26.1Zm5.7-7.7c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8.5 8.5 0 0 1-2.5-1.5 9.4 9.4 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1-1.1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z" /></svg>; }
@@ -44,11 +54,48 @@ export default function Home() {
   }, []);
   useEffect(() => {
     let active = true;
-    fetch('/api/reviews')
-      .then(response => response.ok ? response.json() : Promise.reject())
-      .then(({ reviews: loadedReviews }) => { if (active) setReviews(loadedReviews); })
-      .catch(() => { if (active) setReviewStatus('error'); });
-    return () => { active = false; };
+
+    const loadReviews = async () => {
+      try {
+        const response = await fetch('/api/reviews', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Review request failed with status ${response.status}.`);
+
+        const payload: unknown = await response.json();
+        if (
+          !payload ||
+          typeof payload !== 'object' ||
+          !('reviews' in payload) ||
+          !Array.isArray(payload.reviews) ||
+          !payload.reviews.every(isReview)
+        ) {
+          throw new Error('Review response has an invalid format.');
+        }
+
+        if (active) {
+          setReviews(payload.reviews);
+          setReviewStatus(current => current === 'error' ? 'idle' : current);
+        }
+      } catch (error) {
+        console.error('Failed to load reviews.', error);
+        if (active) setReviewStatus(current => current === 'submitting' ? current : 'error');
+      }
+    };
+
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') void loadReviews();
+    };
+
+    void loadReviews();
+    const intervalId = window.setInterval(refreshWhenVisible, 15_000);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    window.addEventListener('focus', refreshWhenVisible);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      window.removeEventListener('focus', refreshWhenVisible);
+    };
   }, []);
   const t = words[language];
   const seoSummary = t.seoKeywords;

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
-import { firestore } from '@/utils/firebase/admin';
+import { getAdminFirestore } from '@/utils/firebase/admin';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const NAME_LIMIT = 80;
 const REVIEW_LIMIT = 1_000;
@@ -36,13 +39,16 @@ function serializeReview(id: string, data: FirebaseFirestore.DocumentData) {
 
 export async function GET() {
   try {
-    const snapshot = await firestore
+    const snapshot = await getAdminFirestore()
       .collection('reviews')
       .orderBy('created_at', 'desc')
       .limit(30)
       .get();
 
-    return NextResponse.json({ reviews: snapshot.docs.map(doc => serializeReview(doc.id, doc.data())) });
+    return NextResponse.json(
+      { reviews: snapshot.docs.map(doc => serializeReview(doc.id, doc.data())) },
+      { headers: { 'Cache-Control': 'no-store, max-age=0' } },
+    );
   } catch (error) {
     console.error('Failed to load reviews from Firestore.', error);
     return NextResponse.json({ reviews: [] }, { status: 503 });
@@ -54,7 +60,7 @@ export async function POST(request: Request) {
     const input = asReviewInput(await request.json());
     if (!input) return NextResponse.json({ error: 'Please enter a valid name, rating, and review.' }, { status: 400 });
 
-    const reviewRef = firestore.collection('reviews').doc();
+    const reviewRef = getAdminFirestore().collection('reviews').doc();
     const { writeTime } = await reviewRef.create({
       ...input,
       created_at: FieldValue.serverTimestamp(),
