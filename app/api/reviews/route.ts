@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 import { getAdminFirestore } from '@/utils/firebase/admin';
 
 export const runtime = 'nodejs';
@@ -22,31 +22,67 @@ function asReviewInput(value: unknown) {
   return { name: safeName, rating, text: safeText };
 }
 
-function serializeReview(id: string, data: FirebaseFirestore.DocumentData) {
-  const createdAt = data.created_at;
-  if (!(createdAt instanceof Timestamp) && typeof createdAt !== 'string') {
-    throw new Error('Review is missing a valid created_at timestamp.');
+type SerializedReview = { id: string; name: string; rating: number; text: string; created_at: string };
+
+const pause = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds));
+
+function asDate(value: unknown): Date | null {
+  if (value instanceof Timestamp) return value.toDate();
+  if (value instanceof Date) return value;
+  if (typeof value === 'string' || typeof value === 'number') {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  return null;
+}
+
+function serializeReview(id: string, data: FirebaseFirestore.DocumentData): SerializedReview | null {
+  // Supports the original Firestore field as well as older/manual entries.
+  const createdAt = asDate(data.created_at ?? data.createdAt);
+  if (
+    !createdAt ||
+    typeof data.name !== 'string' ||
+    typeof data.text !== 'string' ||
+    typeof data.rating !== 'number' ||
+    !Number.isInteger(data.rating) ||
+    data.rating < 1 ||
+    data.rating > 5
+  ) return null;
+
+  return { id, name: data.name, rating: data.rating, text: data.text, created_at: createdAt.toISOString() };
+}
+
+async function loadReviewsFromFirestore() {
+  let lastError: unknown;
+
+  // The Admin SDK already retries many network errors. This small additional retry
+  // protects the public endpoint from short cold-start/network interruptions.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const snapshot = await getAdminFirestore().collection('reviews').limit(100).get();
+      return snapshot.docs
+        .map(doc => serializeReview(doc.id, doc.data()))
+        .filter((review): review is SerializedReview => review !== null)
+        .sort((first, second) => Date.parse(second.created_at) - Date.parse(first.created_at))
+        .slice(0, 30);
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) await pause(250);
+    }
   }
 
-  return {
-    id,
-    name: data.name,
-    rating: data.rating,
-    text: data.text,
-    created_at: createdAt instanceof Timestamp ? createdAt.toDate().toISOString() : new Date(createdAt).toISOString(),
-  };
+  throw lastError;
 }
 
 export async function GET() {
   try {
-    const snapshot = await getAdminFirestore()
-      .collection('reviews')
-      .orderBy('created_at', 'desc')
-      .limit(30)
-      .get();
+    // Do not order in Firestore: documents created before this implementation may
+    // not have created_at, and Firestore would silently omit them from an ordered
+    // query. We normalise and sort valid documents safely below.
+    const reviews = await loadReviewsFromFirestore();
 
     return NextResponse.json(
-      { reviews: snapshot.docs.map(doc => serializeReview(doc.id, doc.data())) },
+      { reviews },
       { headers: { 'Cache-Control': 'no-store, max-age=0' } },
     );
   } catch (error) {
@@ -61,16 +97,24 @@ export async function POST(request: Request) {
     if (!input) return NextResponse.json({ error: 'Please enter a valid name, rating, and review.' }, { status: 400 });
 
     const reviewRef = getAdminFirestore().collection('reviews').doc();
-    const { writeTime } = await reviewRef.create({
-      ...input,
-      created_at: FieldValue.serverTimestamp(),
-    });
+    const createdAt = Timestamp.now();
+    try {
+      await reviewRef.create({
+        ...input,
+        created_at: createdAt,
+      });
+    } catch (error) {
+      // A request can time out after Firestore has committed the document. Check
+      // the known document ID before reporting a failed submission to the visitor.
+      const existing = await reviewRef.get().catch(() => null);
+      if (!existing?.exists) throw error;
+    }
 
     return NextResponse.json({
       review: {
         id: reviewRef.id,
         ...input,
-        created_at: writeTime.toDate().toISOString(),
+        created_at: createdAt.toDate().toISOString(),
       },
     }, { status: 201 });
   } catch (error) {

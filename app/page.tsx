@@ -47,6 +47,8 @@ export default function Home() {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsLoaded, setReviewsLoaded] = useState(false);
+  const [reviewLoadError, setReviewLoadError] = useState(false);
   const [reviewStatus, setReviewStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   useEffect(() => {
     const requestedLanguage = new URLSearchParams(window.location.search).get('lang');
@@ -54,6 +56,7 @@ export default function Home() {
   }, []);
   useEffect(() => {
     let active = true;
+    let retryTimeout: number | undefined;
 
     const loadReviews = async () => {
       try {
@@ -73,11 +76,17 @@ export default function Home() {
 
         if (active) {
           setReviews(payload.reviews);
-          setReviewStatus(current => current === 'error' ? 'idle' : current);
+          setReviewsLoaded(true);
+          setReviewLoadError(false);
         }
       } catch (error) {
         console.error('Failed to load reviews.', error);
-        if (active) setReviewStatus(current => current === 'submitting' ? current : 'error');
+        if (active) {
+          setReviewLoadError(true);
+          // Firebase/network failures are commonly temporary. Retry sooner than the
+          // normal refresh cycle without clearing reviews already shown on screen.
+          retryTimeout = window.setTimeout(loadReviews, 5_000);
+        }
       }
     };
 
@@ -86,15 +95,18 @@ export default function Home() {
     };
 
     void loadReviews();
-    const intervalId = window.setInterval(refreshWhenVisible, 15_000);
+    const intervalId = window.setInterval(refreshWhenVisible, 30_000);
     document.addEventListener('visibilitychange', refreshWhenVisible);
     window.addEventListener('focus', refreshWhenVisible);
+    window.addEventListener('online', refreshWhenVisible);
 
     return () => {
       active = false;
+      if (retryTimeout) window.clearTimeout(retryTimeout);
       window.clearInterval(intervalId);
       document.removeEventListener('visibilitychange', refreshWhenVisible);
       window.removeEventListener('focus', refreshWhenVisible);
+      window.removeEventListener('online', refreshWhenVisible);
     };
   }, []);
   const t = words[language];
@@ -246,8 +258,12 @@ export default function Home() {
         body: JSON.stringify({ name: reviewName, rating: reviewRating, text: reviewText }),
       });
       if (!response.ok) throw new Error('Review submission failed');
-      const { review } = await response.json();
-      setReviews(current => [review, ...current]);
+      const payload: unknown = await response.json();
+      if (!payload || typeof payload !== 'object' || !('review' in payload) || !isReview(payload.review)) throw new Error('Review response has an invalid format.');
+      const review = payload.review;
+      setReviews(current => [review, ...current.filter(item => item.id !== review.id)].sort((first, second) => Date.parse(second.created_at) - Date.parse(first.created_at)));
+      setReviewsLoaded(true);
+      setReviewLoadError(false);
       setReviewName('');
       setReviewRating(5);
       setReviewText('');
@@ -265,7 +281,7 @@ export default function Home() {
     <section className="reviews review-showcase">
       <p className="eyebrow">{language === 'kn' ? 'ಗ್ರಾಹಕ ಪ್ರತಿಕ್ರಿಯೆಗಳು' : language === 'te' ? 'సమీక్షలు' : 'Reviews'}</p>
       <h2>{language === 'kn' ? 'ನಮ್ಮ ಭಕ್ತರ ಅನುಭವಗಳು' : language === 'te' ? 'మా భక్తుల అనుభవాలు' : 'Experiences shared by devotees'}</h2>
-      <div className="review-list review-list-showcase">{reviews.length === 0 ? <p className="review-empty">{language === 'kn' ? 'ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆಗಳಿಲ್ಲ. ನಿಮ್ಮ ಅನುಭವವನ್ನು ಮೊದಲನೆಯದಾಗಿ ಹಂಚಿಕೊಳ್ಳಿ.' : language === 'te' ? 'ఇంకా సమీక్షలు లేవు. మీ అనుభవాన్ని మొదటిగా పంచుకోండి.' : 'No reviews yet. Be the first to share your experience.'}</p> : reviews.map(review => <article key={review.id} className="review-card"><div className="review-header"><strong>{review.name}</strong><span className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></div><p>{review.text}</p><time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(language === 'kn' ? 'kn-IN' : language === 'te' ? 'te-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</time></article>)}</div>
+      <div className="review-list review-list-showcase">{reviews.length === 0 ? <p className="review-empty" aria-live="polite">{!reviewsLoaded ? (language === 'kn' ? 'ವಿಮರ್ಶೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...' : language === 'te' ? 'సమీక్షలు లోడ్ అవుతున్నాయి...' : 'Loading reviews…') : reviewLoadError ? (language === 'kn' ? 'ವಿಮರ್ಶೆಗಳನ್ನು ತಾತ್ಕಾಲಿಕವಾಗಿ ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.' : language === 'te' ? 'సమీక్షలను తాత్కాలికంగా లోడ్ చేయలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి.' : 'Reviews are temporarily unavailable. Please try again shortly.') : (language === 'kn' ? 'ಇನ್ನೂ ಯಾವುದೇ ವಿಮರ್ಶೆಗಳಿಲ್ಲ. ನಿಮ್ಮ ಅನುಭವವನ್ನು ಮೊದಲನೆಯದಾಗಿ ಹಂಚಿಕೊಳ್ಳಿ.' : language === 'te' ? 'ఇంకా సమీక్షలు లేవు. మీ అనుభవాన్ని మొదటిగా పంచుకోండి.' : 'No reviews yet. Be the first to share your experience.')}</p> : reviews.map(review => <article key={review.id} className="review-card"><div className="review-header"><strong>{review.name}</strong><span className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></div><p>{review.text}</p><time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(language === 'kn' ? 'kn-IN' : language === 'te' ? 'te-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</time></article>)}</div>
     </section>
     <section className="reviews review-form-section">
       <p className="eyebrow">{language === 'kn' ? 'ನಿಮ್ಮ ಅನುಭವ' : language === 'te' ? 'మీ అనుభవం' : 'Your experience'}</p>
